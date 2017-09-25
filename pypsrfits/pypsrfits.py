@@ -189,7 +189,7 @@ class psrfits(F.FITS):
             if key not in new_ImHDU.__dict__['_info'].keys():
                 new_ImHDU.__dict__['_info'][key] = ImHDU_template.__dict__['_info'][key]
 
-    def set_subint_dims(nbin=1,nchan=2048,npol=4,nsblk=4096, nsubint=4, obs_mode='search'):
+    def set_subint_dims(nbin=1,nchan=2048,npol=4,nsblk=4096, nsubint=4, obs_mode='search',data_dtype='|u2'):
         """
         Method to set the appropriate parameters for a PSRFITS file of the given dimensions.
         The parameters above are defined in the PSRFITS literature.
@@ -201,13 +201,17 @@ class psrfits(F.FITS):
         obs_mode = observation mode. (SEARCH, PSR, CAL)
         """
         #Checks
-        if obs_mode.upper() == 'SEARCH' and nbin != 1:
-            raise ValueError('NBIN (set to {0}) parameter not set to correct value for SEARCH mode.'.format(nbin))
-        if (obs_mode.upper() == 'PSR' or obs_mode.upper() == 'CAL') and nsblk != 1:
-            raise ValueError('NSBLK (set to {0}) parameter not set to correct value for {1} mode.'.format(nsblk,obs_mode.upper()))
-
-        set_HDU_array_shape_and_dtype(subint_dtype,'DAT_FREQ',(nchan,))
-        set_HDU_array_shape_and_dtype(subint_dtype,'DAT_WTS',(nchan,))
-        set_HDU_array_shape_and_dtype(subint_dtype,'DAT_OFFS',(nchan*npol,))
-        set_HDU_array_shape_and_dtype(subint_dtype,'DAT_SCL',(nchan*npol,))
-        set_HDU_array_shape_and_dtype(subint_dtype,'DATA','|u2',(nbin,nchan,npol,nsblk))
+        if obs_mode.upper() == 'SEARCH':
+            sub_int_ind = 1 #This must always be true, but worth testing..
+            if nbin != 1:
+                raise ValueError('NBIN (set to {0}) parameter not set to correct value for SEARCH mode.'.format(nbin))
+        if (obs_mode.upper() == 'PSR' or obs_mode.upper() == 'CAL'):
+            sub_int_ind = 4 #Need to check that this is always true...
+            if nsblk != 1:
+                raise ValueError('NSBLK (set to {0}) parameter not set to correct value for {1} mode.'.format(nsblk,obs_mode.upper()))
+        subint_dtype = self.get_HDU_dtypes(self.fits_template[])
+        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_FREQ',(nchan,))
+        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_WTS',(nchan,))
+        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_OFFS',(nchan*npol,))
+        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_SCL',(nchan*npol,))
+        self.set_HDU_array_shape_and_dtype(subint_dtype,'DATA',data_dtype,(nbin,nchan,npol,nsblk))
