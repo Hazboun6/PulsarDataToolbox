@@ -25,7 +25,7 @@ class psrfits(F.FITS):
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
         if os.path.exists(psrfits_path) and not from_template:
-            print('Loading PSRFITS file from path \'{0}\'.'.format(psrfits_path))
+            print('Loading PSRFITS file from path:\n\'{0}\'.'.format(psrfits_path))
 
         #TODO If user enters 'READWRITE' (or 'rw') but from_template=False then
         # the template will track the changes in the loaded file and save them as
@@ -133,6 +133,11 @@ class psrfits(F.FITS):
         new_value = The new value you would like to replace.
         """
         record = self.get_FITS_card_dict(hdr,name)
+
+        if isinstance(record['value'],tuple):
+            record['value'] = str(record['value']).replace(' ','')
+            #Workaround for TDIM17 in SUBINT HDU... Could make more specific if necessary.
+
         if str(record['value']) in record['card_string']: #TODO Add error checking new value... and isinstance(new_value)
             try: #when new_value is a string
                 if len(new_value)<len(record['value']):
@@ -165,7 +170,7 @@ class psrfits(F.FITS):
     def get_HDU_dtypes(self, HDU):
         return HDU.get_rec_dtype()[0].descr
 
-    def set_HDU_array_shape_and_dtype(self, HDU_dtype_list,name,new_array_shape=None,new_dtype=None):
+    def set_HDU_array_shape_and_dtype(self, HDU_dtype_list, name, new_array_shape=None, new_dtype=None):
         try:
             ii = [x for x, y in enumerate(HDU_dtype_list) if y[0] == name.upper()][0]
         except:
@@ -189,7 +194,7 @@ class psrfits(F.FITS):
             if key not in new_ImHDU.__dict__['_info'].keys():
                 new_ImHDU.__dict__['_info'][key] = ImHDU_template.__dict__['_info'][key]
 
-    def set_subint_dims(nbin=1,nchan=2048,npol=4,nsblk=4096, nsubint=4, obs_mode='search',data_dtype='|u2'):
+    def set_subint_dims(self, nbin=1,nchan=2048,npol=4,nsblk=4096, nsubint=4, obs_mode='search',data_dtype='|u2'):
         """
         Method to set the appropriate parameters for a PSRFITS file of the given dimensions.
         The parameters above are defined in the PSRFITS literature.
@@ -209,9 +214,38 @@ class psrfits(F.FITS):
             sub_int_ind = 4 #Need to check that this is always true...
             if nsblk != 1:
                 raise ValueError('NSBLK (set to {0}) parameter not set to correct value for {1} mode.'.format(nsblk,obs_mode.upper()))
-        subint_dtype = self.get_HDU_dtypes(self.fits_template[])
-        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_FREQ',(nchan,))
-        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_WTS',(nchan,))
-        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_OFFS',(nchan*npol,))
-        self.set_HDU_array_shape_and_dtype(subint_dtype,'DAT_SCL',(nchan*npol,))
-        self.set_HDU_array_shape_and_dtype(subint_dtype,'DATA',data_dtype,(nbin,nchan,npol,nsblk))
+
+        if data_dtype=='|u1':
+            self.bitpix = 8
+        elif data_dtype=='|u2':
+            self.bitpix = 16
+        #Set Header values dependent on data shape
+        self.replace_FITS_Record('PRIMARY','BITPIX',self.bitpix)
+        self.replace_FITS_Record('SUBINT','BITPIX',self.bitpix)
+        self.replace_FITS_Record('SUBINT','NBITS',self.bitpix)
+        self.replace_FITS_Record('SUBINT','NBIN',nbin)
+        self.replace_FITS_Record('SUBINT','NCHAN',nchan)
+        self.replace_FITS_Record('PRIMARY','OBSNCHAN',nchan)
+        self.replace_FITS_Record('SUBINT','NPOL',npol)
+        self.replace_FITS_Record('SUBINT','NSBLK',nsblk)
+        self.replace_FITS_Record('SUBINT','NAXIS2',nsubint)
+        self.replace_FITS_Record('SUBINT','TFORM13',str(nchan)+'E')
+        self.replace_FITS_Record('SUBINT','TFORM14',str(nchan)+'E')
+        self.replace_FITS_Record('SUBINT','TFORM15',str(nchan*npol)+'E')
+        self.replace_FITS_Record('SUBINT','TFORM16',str(nchan*npol)+'E')
+        tform17 = nbin*nchan*npol*nsblk*self.bitpix
+        self.replace_FITS_Record('SUBINT','TFORM17',str(tform17)+'B')
+        bytes_in_lone_floats = 7*8 + 5*4 #This is the number of bytes in TSUBINT, etc.
+        naxis1 = str(tform17 + 2*nchan*4 + 2*nchan*npol*4 + bytes_in_lone_floats)
+        self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1)+'B')
+        tdim17 = '('+str(nbin)+','+str(nchan)+','+str(npol)+','+str(nsblk)+')'
+        self.replace_FITS_Record('SUBINT','TDIM17', tdim17)
+
+        #Make a dtype list with defined dimensions and data type
+        self.nrows = self.nsubint = nsubint
+        self.subint_dtype = self.get_HDU_dtypes(self.fits_template[sub_int_ind])
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_FREQ',(nchan,))
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_WTS',(nchan,))
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_OFFS',(nchan*npol,))
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_SCL',(nchan*npol,))
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',data_dtype,(nbin,nchan,npol,nsblk))
