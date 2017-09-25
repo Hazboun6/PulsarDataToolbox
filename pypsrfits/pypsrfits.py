@@ -27,6 +27,9 @@ class psrfits(F.FITS):
         if os.path.exists(psrfits_path) and not from_template:
             print('Loading PSRFITS file from path \'{0}\'.'.format(psrfits_path))
 
+        #TODO If user enters 'READWRITE' (or 'rw') but from_template=False then
+        # the template will track the changes in the loaded file and save them as
+        # using the loaded .fits as the template... or (from_template==False and mode='rw')
         elif from_template :
             if os.path.exists(psrfits_path):
                 os.remove(psrfits_path)
@@ -154,6 +157,8 @@ class psrfits(F.FITS):
         return new_record
 
     def replace_FITS_Record(self, hdr, name, new_value):
+        if isinstance(hdr,str):
+            hdr = self.draft_hdrs[hdr] #Maybe faster if try: except: used?
         new_record = self.make_FITS_card(hdr,name,new_value)
         hdr.add_record(new_record)
 
