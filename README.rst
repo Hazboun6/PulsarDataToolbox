@@ -18,7 +18,7 @@ PyPSRFITS
      :alt: Updates
 
 
-Python package for dealing with PSRFITS fsS files.
+Python package for dealing with PSRFITS files.
 
 
 * Free software: GNU General Public License v3
@@ -37,4 +37,3 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
