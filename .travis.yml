@@ -22,9 +22,9 @@ deploy:
   distributions: sdist bdist_wheel
   provider: pypi
 install:
-    -pip install -U tox-travis
-    -pip install -r requirements_dev.txt
-    -pip install -r requirements.txt
+    - pip install -U tox-travis
+    - pip install -r requirements_dev.txt
+    - pip install -r requirements.txt
 language: python
 python:
 - 3.5
