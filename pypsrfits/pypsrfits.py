@@ -62,12 +62,20 @@ class psrfits(F.FITS):
     def write_psrfits(self):
         self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
         self.set_hdr_from_draft('PRIMARY')
-        nrows = self.draft_hdrs['SUBINT']['NAXIS2'] # Might need to go into for loop if not true for all BinTables
+        #nrows = self.draft_hdrs['SUBINT']['NAXIS2'] # Might need to go into for loop if not true for all BinTables
         for jj, hdr in enumerate(self.draft_hdr_keys[1:]):
-            HDU_dtype_list = self.get_HDU_dtypes(self.fits_template[jj+1])
-            rec_array = self.make_HDU_rec_array(nrows, HDU_dtype_list)
             self.write_table(rec_array)
             self.set_hdr_from_draft(hdr)
+
+    # def write_psrfits_from_draft?(self):
+    #     self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
+    #     self.set_hdr_from_draft('PRIMARY')
+    #     nrows = self.draft_hdrs['SUBINT']['NAXIS2'] # Might need to go into for loop if not true for all BinTables
+    #     for jj, hdr in enumerate(self.draft_hdr_keys[1:]):
+    #         HDU_dtype_list = self.get_HDU_dtypes(self.fits_template[jj+1])
+    #         rec_array = self.make_HDU_rec_array(nrows, HDU_dtype_list)
+    #         self.write_table(rec_array)
+    #         self.set_hdr_from_draft(hdr)
 
     def append_subint_array(self,table):
         """
@@ -194,7 +202,7 @@ class psrfits(F.FITS):
             if key not in new_ImHDU.__dict__['_info'].keys():
                 new_ImHDU.__dict__['_info'][key] = ImHDU_template.__dict__['_info'][key]
 
-    def set_subint_dims(self, nbin=1,nchan=2048,npol=4,nsblk=4096, nsubint=4, obs_mode='search',data_dtype='|u2'):
+    def set_subint_dims(self, nbin=1, nchan=2048, npol=4, nsblk=4096, nsubint=4, obs_mode='search', data_dtype='|u1'):
         """
         Method to set the appropriate parameters for a PSRFITS file of the given dimensions.
         The parameters above are defined in the PSRFITS literature.
@@ -240,6 +248,7 @@ class psrfits(F.FITS):
         self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1)+'B')
         tdim17 = '('+str(nbin)+','+str(nchan)+','+str(npol)+','+str(nsblk)+')'
         self.replace_FITS_Record('SUBINT','TDIM17', tdim17)
+        #Could make tdim17 a tuple, instead of string? Though that might change how it looks...
 
         #Make a dtype list with defined dimensions and data type
         self.nrows = self.nsubint = nsubint
@@ -248,4 +257,4 @@ class psrfits(F.FITS):
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_WTS',(nchan,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_OFFS',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_SCL',(nchan*npol,))
-        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',data_dtype,(nbin,nchan,npol,nsblk))
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',(nbin,nchan,npol,nsblk),data_dtype)
