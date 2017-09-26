@@ -27,7 +27,7 @@ test_requirements = [
 setup(
     name='pypsrfits',
     version='0.1.0',
-    description="Python package for dealing with PSRFITS fsS files.",
+    description="Python package for dealing with PSRFITS files.",
     long_description=readme + '\n\n' + history,
     author="Jeffrey S Hazboun",
     author_email='jeffrey.hazboun@gmail.com',
