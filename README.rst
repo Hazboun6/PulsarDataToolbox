@@ -6,15 +6,15 @@ PyPSRFITS
 .. image:: https://img.shields.io/pypi/v/pypsrfits.svg
         :target: https://pypi.python.org/pypi/pypsrfits
 
-.. image:: https://img.shields.io/travis/hazboun6/pypsrfits.svg
-        :target: https://travis-ci.org/hazboun6/pypsrfits
+.. image:: https://img.shields.io/travis/Hazboun6/pypsrfits.svg
+        :target: https://travis-ci.org/Hazboun6/pypsrfits
 
 .. image:: https://readthedocs.org/projects/pypsrfits/badge/?version=latest
         :target: https://pypsrfits.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/hazboun6/pypsrfits/shield.svg
-     :target: https://pyup.io/repos/github/hazboun6/pypsrfits/
+.. image:: https://pyup.io/repos/github/Hazboun6/pypsrfits/shield.svg
+     :target: https://pyup.io/repos/github/Hazboun6/pypsrfits/
      :alt: Updates
 
 
