@@ -258,8 +258,8 @@ texinfo_documents = [
      u'PyPSRFITS Documentation',
      u'Jeffrey S Hazboun',
      'pypsrfits',
-     'One line description of project.',
-     'Miscellaneous'),
+     'Package to deal with PSRFITS files for pulsar data.',
+     'File-type handling'),
 ]
 
 # Documents to append as an appendix to all manuals.
