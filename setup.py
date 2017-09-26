@@ -13,6 +13,8 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
+    'numpy>=1.11',
+    'fitsio>=0.9.10',
     # TODO: put package requirements here
 ]
 
