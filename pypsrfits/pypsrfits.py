@@ -46,25 +46,49 @@ class psrfits(F.FITS):
 
             self.fits_template = F.FITS(template_path, mode='r')
             self.draft_hdrs = collections.OrderedDict()
+            self.HDU_drafts = {}
             self.draft_hdrs['PRIMARY'] = self.fits_template[0].read_header() #Set the ImageHDU to be called primary.
             self.n_hdrs = len(self.fits_template.hdu_list)
 
             for ii in range(self.n_hdrs-1):
-                self.draft_hdrs[self.fits_template[ii+1].get_extname()] = self.fits_template[ii+1].read_header()
+                hdr_key = self.fits_template[ii+1].get_extname()
+                self.draft_hdrs[hdr_key] = self.fits_template[ii+1].read_header()
+                self.HDU_drafts[hdr_key] = None
             self.draft_hdr_keys = list(self.draft_hdrs.keys())
             print('Making new {0} mode PSRFITS file using template from path:\n\'{1}\'. \nWriting to path \'{2}\'.'.format(obs_mode,template_path,psrfits_path))
 
         super(psrfits, self).__init__(psrfits_path, mode = mode)
 
+
         if from_template:
             print('The Binary Table HDU headers will be written as they are added\n\t to the PSRFITS file.')
 
-    def write_psrfits(self):
+        elif not from_template and (mode=='rw' or mode=='READWRITE'):
+            self.draft_hdrs = collections.OrderedDict()
+            self.HDU_drafts = {}
+            self.draft_hdrs['PRIMARY'] = self[0].read_header() #Set the ImageHDU to be called primary.
+            self.n_hdrs = len(self.hdu_list)
+
+            for ii in range(self.n_hdrs-1):
+                hdr_key = self[ii+1].get_extname()
+                self.draft_hdrs[hdr_key] = self[ii+1].read_header()
+                self.HDU_drafts[hdr_key] = None
+            self.draft_hdr_keys = list(self.draft_hdrs.keys())
+
+
+    def write_psrfits(self,HDUs=None):
+        """
+        Function that takes the template headers and a dictionary of recarrays to make
+          into PSRFITS HDU's. These should only include BinTable HDU Extensions, not the
+          PRIMARY header (an ImageHDU). PRIMARY is dealt with a bit differently.
+        HDUs = dictionary of recarrays to make into HDUs. Default is set to HDU_drafts
+        """
+        if not HDUs:
+            HDUs = self.HDU_drafts
         self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
         self.set_hdr_from_draft('PRIMARY')
-        #nrows = self.draft_hdrs['SUBINT']['NAXIS2'] # Might need to go into for loop if not true for all BinTables
-        for jj, hdr in enumerate(self.draft_hdr_keys[1:]):
-            self.write_table(rec_array)
+        for hdr in self.draft_hdr_keys[1:]:
+            self.write_table(HDUs[hdr])
             self.set_hdr_from_draft(hdr)
 
     # def write_psrfits_from_draft?(self):
@@ -77,41 +101,56 @@ class psrfits(F.FITS):
     #         self.write_table(rec_array)
     #         self.set_hdr_from_draft(hdr)
 
-    def append_subint_array(self,table):
+    # def append_subint_array(self,table):
+    #     """
+    #     Method to append more subintegrations to a PSRFITS file from Python arrays.
+    #     The array must match the columns (in the numpy.recarray sense)
+    #      of the existing PSRFITS file.
+    #     """
+    #     fits_to_append = F.FITS(table)
+
+    def append_from_file(self,path,table='all'):
         """
-        Method to append more subintegrations to a PSRFITS file from Python arrays.
+        Method to append more subintegrations to a PSRFITS file from other PSRFITS files.
+        Note: Table are appended directly to the original file. Make a copy before
+          copying if you are unsure about appending.
         The array must match the columns (in the numpy.recarray sense)
          of the existing PSRFITS file.
+        path = path to the new PSRFITS file to be appended.
+        table = list of BinTable HDU headers to append from file. ['HISTORY','PSRPARAM','POLYCO','SUBINT']
+            Defaults to appedning all BinTables.
         """
-        fits_to_append = F.FITS(table)
+        PF2A = F.FITS(path, mode='r')
+        PF2A_hdrs = []
+        PF2A_hdrs.append('PRIMARY')
+        for ii in range(self.n_hdrs-1):
+            hdr_key = PF2A[ii+1].get_extname()
+            PF2A_hdrs.append(hdr_key)
+        if table=='all':
+            if PF2A_hdrs!= self.draft_hdr_keys:
+                if len(PF2A_hdrs)!= self.n_hdrs:
+                    raise ValueError('{0} and {1} do not have the same number of BinTable HDUs.'.format(self.psrfits_path,path))
+                else:
+                    raise ValueError('Original PSRFITS HDUs ({0}) and PSRFITS to append ({1}) have different BinTables or they are in different orders. \nEnter a table list matching the order of the orginal PSRFITS file.'.format(self.draft_hdr_keys,PF2A_hdrs))
+            else:
+                table=PF2A_hdrs
+        for hdr in self.draft_hdr_keys[1:]:
+            rec_array = PF2A[list_arg(table,hdr)].read()
+            self[list_arg(self.draft_hdr_keys,hdr)].append(rec_array)
 
-#     def append_subint_file(self,table):
-#         """
-#         Method to append more subintegrations to a PSRFITS file from other PSRFITS files.
-#         The array must match the columns (in the numpy.recarray sense)
-#          of the existing PSRFITS file.
-#         """
-#         if table.shape != self[1]['DATA']:
-#             raise ValueError('DATA array shapes do not have the same dimensions!!')
-#     def method_to_access_data
-#     def method_to_make SUBINT BinTable from data
 #######Convenience Functions################
     def get_colnames():
         """Returns the names of all of the columns of data needed for a PSRFITS file."""
         return self[1].get_colnames()
 
-    def list_arg(self, list_name, string):
-        """Returns the argument of a particular string in a list of strings."""
-        return [x for x, y in enumerate(list_name) if y == string][0]
-
     def set_hdr_from_draft(self, hdr):
-        """Sets a header of the PSRFITS file using the same header as the template"""
+        """Sets a header of the PSRFITS file using the draft header derived from template."""
         keys = self.draft_hdr_keys
         if isinstance(hdr,int):
             hdr_name = keys[hdr]
         if isinstance(hdr,str):
             hdr_name = hdr.upper()
-            hdr = self.list_arg(keys,hdr_name)
+            hdr = list_arg(keys,hdr_name)
         with warnings.catch_warnings(): #This is very Dangerous
             warnings.simplefilter("ignore")
             self[hdr].write_keys(self.draft_hdrs[hdr_name],clean=False)
@@ -170,15 +209,34 @@ class psrfits(F.FITS):
         return new_record
 
     def replace_FITS_Record(self, hdr, name, new_value):
+        """
+        Replace a Fits record with a new value in a fitsio.fitslib.FITSHDR object.
+        hdr = Header name as string or FITSHDR object.
+        name = FITS Record/Card name to replace.
+        new_value = The new value of the parameter.
+        """
         if isinstance(hdr,str):
             hdr = self.draft_hdrs[hdr] #Maybe faster if try: except: used?
         new_record = self.make_FITS_card(hdr,name,new_value)
         hdr.add_record(new_record)
 
     def get_HDU_dtypes(self, HDU):
+        """
+        Returns a list of data types and array sizes needed to make a recarray.
+        HDU = A FITS HDU.
+        """
         return HDU.get_rec_dtype()[0].descr
 
     def set_HDU_array_shape_and_dtype(self, HDU_dtype_list, name, new_array_shape=None, new_dtype=None):
+        """
+        Takes a list of data types (output of get_HDU_dtypes()) and returns new
+        list with the named element's array shape and/or data type edited.
+        HDU_dtype_list = dtype list for making recarray (output of get_HDU_dtypes()).
+        name = Name of parameter to edit.
+        new_array_shape = tuple defining new array shape. Note 1-d arrays are of type (n,)
+          in FITS files.
+        new_dtype = New data type. See PSRFITS and fitsio documentation for recognized names.
+        """
         try:
             ii = [x for x, y in enumerate(HDU_dtype_list) if y[0] == name.upper()][0]
         except:
@@ -191,9 +249,18 @@ class psrfits(F.FITS):
             HDU_dtype_list[ii] = (HDU_dtype_list[ii][0],new_dtype,HDU_dtype_list[ii][2])
 
     def make_HDU_rec_array(self, nrows, HDU_dtype_list):
+        """
+        Makes a rec array with the set number of rows and data structure dictated
+        by the dtype list.
+        """
+        #TODO Add in hdf5 type file format for large arrays?
         return np.empty(nrows, dtype=HDU_dtype_list)
 
-    def write_PrimaryHDU_info_dict(self, ImHDU_template,new_ImHDU):
+    def write_PrimaryHDU_info_dict(self, ImHDU_template, new_ImHDU):
+        """
+        Writes the information dictionary for a primary header Image HDU (new_ImHDU)
+        using ImHDU_template as the template. Both are FITS HDUs. 
+        """
         try:
             new_ImHDU.__dict__['_info'].__delitem__('error')
         except:
@@ -204,14 +271,21 @@ class psrfits(F.FITS):
 
     def set_subint_dims(self, nbin=1, nchan=2048, npol=4, nsblk=4096, nsubint=4, obs_mode='search', data_dtype='|u1'):
         """
-        Method to set the appropriate parameters for a PSRFITS file of the given dimensions.
+        Method to set the appropriate parameters for the SUBINT BinTable of
+          a PSRFITS file of the given dimensions.
         The parameters above are defined in the PSRFITS literature.
+        The method automatically changes all the header information in the template
+          dependent on these values. The header template is set to these values.
+        A list version of a dtype array is made which hs all the pertinent info
+          to make a SUBINT recarray. This can then be written to a PSRFITS file,
+          using the command write_prsfits().
         nbin = NBIN, number of bins. 1 for SEARCH mode data
         nchan = NCHAN, number of frequency channels
         npol = NPOL, number of polarization channels
         nsblk = NSBLK, size of the data chunks for search mode data. Set to 1 for PSR and CAL mode.
         nsubint = NSUBINT or NAXIS2 . This is the number of rows or subintegrations in the PSRFITS file.
         obs_mode = observation mode. (SEARCH, PSR, CAL)
+        data_type = data type of the DATA array ('|u1'=int8 or '|u2'=int16).
         """
         #Checks
         if obs_mode.upper() == 'SEARCH':
@@ -243,7 +317,8 @@ class psrfits(F.FITS):
         self.replace_FITS_Record('SUBINT','TFORM16',str(nchan*npol)+'E')
         tform17 = nbin*nchan*npol*nsblk*self.bitpix
         self.replace_FITS_Record('SUBINT','TFORM17',str(tform17)+'B')
-        bytes_in_lone_floats = 7*8 + 5*4 #This is the number of bytes in TSUBINT, etc.
+        bytes_in_lone_floats = 7*8 + 5*4
+        #This is the number of bytes in TSUBINT, OFFS_SUB, LST_SUB, etc.
         naxis1 = str(tform17 + 2*nchan*4 + 2*nchan*npol*4 + bytes_in_lone_floats)
         self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1)+'B')
         tdim17 = '('+str(nbin)+','+str(nchan)+','+str(npol)+','+str(nsblk)+')'
@@ -258,3 +333,20 @@ class psrfits(F.FITS):
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_OFFS',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_SCL',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',(nbin,nchan,npol,nsblk),data_dtype)
+
+    def real_data(self):
+        """
+        Method that reads the DATA, DAT_SCL, DAT_OFFS and DAT_WTS together into a
+          HDF5 file so that the real data can be used for calculations.
+        """
+        data = h5py.File('data.hdf5',mode=w)
+        data = self[1].read_columns('DATA')
+        dat_offs = self[1].read_columns('DATA_OFFS')
+        dat_scl = self[1].read_columns('DATA_SCL')
+        dat_wts = self[1].read_columns('DATA_OFFS')
+        #data = DATA*DAT_SCL+DAT_OFFS
+
+
+def list_arg(list_name, string):
+    """Returns the argument of a particular string in a list of strings."""
+    return [x for x, y in enumerate(list_name) if y == string][0]
