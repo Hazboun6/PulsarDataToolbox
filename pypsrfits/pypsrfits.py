@@ -14,7 +14,7 @@ class psrfits(F.FITS):
     def __init__(self, psrfits_path, mode = 'rw', from_template=False, obs_mode='SEARCH'):
         """
         Class which inherits fitsio.FITS() (Python wrapper for cfitsio) class's functionality,
-        and add's new functionality for easily manipulate and make PSRFITS files.
+        and add's new functionality to easily manipulate and make PSRFITS files.
         from_template= True, False or a string which is the path to a user chosen template.
         psrfits_path = Either the path to an existing PSRFITS file or the name for a new file.
         obs_mode = Same as OBS_MODE in a standard PSRFITS, either SEARCH, PSR or CAL
@@ -259,7 +259,7 @@ class psrfits(F.FITS):
     def write_PrimaryHDU_info_dict(self, ImHDU_template, new_ImHDU):
         """
         Writes the information dictionary for a primary header Image HDU (new_ImHDU)
-        using ImHDU_template as the template. Both are FITS HDUs. 
+        using ImHDU_template as the template. Both are FITS HDUs.
         """
         try:
             new_ImHDU.__dict__['_info'].__delitem__('error')
