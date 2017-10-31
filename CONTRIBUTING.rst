@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/hazboun6/PulsarDataToolbox/issues.
+Report bugs at https://github.com/Hazboun6/PulsarDataToolbox/issues.
 
 If you are reporting a bug, please include:
 
@@ -78,7 +78,7 @@ Ready to contribute? Here's how to set up `PulsarDataToolbox` for local developm
 
 5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
 
-    $ flake8 PulsarDataToolbox tests
+    $ flake8 pdat tests
     $ python setup.py test or py.test
     $ tox
 
@@ -111,4 +111,4 @@ Tips
 To run a subset of tests::
 
 
-    $ python -m unittest tests.test_PulsarDataToolbox
+    $ python -m unittest tests.test_pdat

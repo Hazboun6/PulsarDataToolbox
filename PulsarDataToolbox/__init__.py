@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Top-level package for PyPSRFITS."""
+"""Top-level package for PulsarDataToolbox."""
 
 __author__ = """Jeffrey S Hazboun"""
 __email__ = 'jeffrey.hazboun@gmail.com'

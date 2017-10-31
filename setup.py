@@ -19,7 +19,7 @@ requirements = [
 ]
 
 setup_requirements = [
-    # TODO(hazboun6): put setup requirements (distutils extensions, etc.) here
+    # TODO(Hazboun6): put setup requirements (distutils extensions, etc.) here
 ]
 
 test_requirements = [
@@ -27,28 +27,28 @@ test_requirements = [
 ]
 
 setup(
-    name='PulsarDataToolbox',
+    name='pdat',
     version='0.1.0',
     description="Python package for dealing with PSRFITS and other pulsar data files.",
     long_description=readme + '\n\n' + history,
     author="Jeffrey S Hazboun",
     author_email='jeffrey.hazboun@gmail.com',
     url='https://github.com/hazboun6/PulsarDataToolbox',
-    packages=find_packages(include=['PulsarDataToolbox']),
+    packages=find_packages(include=['pdat']),
     entry_points={
         'console_scripts': [
-            'PulsarDataToolbox=PulsarDataToolbox.cli:main'
+            'pdat=pdat.cli:main'
         ]
     },
     include_package_data=True,
     install_requires=requirements,
-    license="GNU General Public License v3",
+    license="MIT License",
     zip_safe=False,
     keywords='PulsarDataToolbox',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Intended Audience :: Pulsar Astronomers',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.7',

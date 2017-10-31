@@ -4,7 +4,7 @@ PulsarDataToolbox
 
 
 .. image:: https://img.shields.io/pypi/v/PulsarDataToolbox.svg
-        :target: https://pypi.python.org/pypi/PulsarDataToolbox
+        :target: https://pypi.python.org/pypi/pdat
 
 .. image:: https://img.shields.io/travis/Hazboun6/PulsarDataToolbox.svg
         :target: https://travis-ci.org/Hazboun6/PulsarDataToolbox

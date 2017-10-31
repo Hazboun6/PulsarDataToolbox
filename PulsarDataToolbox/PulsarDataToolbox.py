@@ -2,7 +2,7 @@
 
 """Main module."""
 
-#PyPSRFITS. Based on fitsio package. See https://github.com/esheldon/fitsio for details.
+#Pulsar Data Toolbox. Based on fitsio package. See https://github.com/esheldon/fitsio for details.
 import numpy as np
 import fitsio as F
 import collections, os

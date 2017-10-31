@@ -2,7 +2,7 @@
 deploy:
   true:
     python: 2.7
-    repo: hazboun6/PulsarDataToolbox
+    repo: Hazboun6/PulsarDataToolbox
     tags: true
   password:
     secure: !!binary |
@@ -18,7 +18,7 @@ deploy:
       RTJqTjMrTE8vRzVPeTJJR2l1ZC90NnR0NDRkYmtQMmliTzA4bEJXeWZWVVUwdGVmT1RDYzFsM1Zm
       b3M1OExYMmI4dUFFYjBKOXJNU0xMU0JSTmUyamFnY3I4eEN5aVRmRDR5cTMvdmd1QXpNaC9jcnkx
       QmtCTjZvSHRZbWIwdnBNQUFCaTZxZUJRSHVBMlkvcmJrSzBFNkFCU09SWjZvRmpnLzNQVVVyOXc9
-  user: hazboun6
+  user: Hazboun6
   distributions: sdist bdist_wheel
   provider: pypi
 install:

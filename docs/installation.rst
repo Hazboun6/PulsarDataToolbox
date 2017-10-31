@@ -12,7 +12,7 @@ To install PulsarDataToolbox, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install PulsarDataToolbox
+    $ pip install pdat
 
 This is the preferred method to install PulsarDataToolbox, as it will always install the most recent stable release.
 
@@ -32,7 +32,7 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/hazboun6/PulsarDataToolbox
+    $ git clone git://github.com/Hazboun6/PulsarDataToolbox
 
 Or download the `tarball`_:
 
