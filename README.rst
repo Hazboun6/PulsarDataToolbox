@@ -21,7 +21,7 @@ PulsarDataToolbox
 Python package for dealing with PSRFITS files.
 
 
-* Free software: GNU General Public License v3
+* Free software: MIT License
 * Documentation: https://PulsarDataToolbox.readthedocs.io.
 
 
