@@ -1,20 +1,20 @@
 =========
-PyPSRFITS
+PulsarDataToolbox
 =========
 
 
-.. image:: https://img.shields.io/pypi/v/pypsrfits.svg
-        :target: https://pypi.python.org/pypi/pypsrfits
+.. image:: https://img.shields.io/pypi/v/PulsarDataToolbox.svg
+        :target: https://pypi.python.org/pypi/PulsarDataToolbox
 
-.. image:: https://img.shields.io/travis/Hazboun6/pypsrfits.svg
-        :target: https://travis-ci.org/Hazboun6/pypsrfits
+.. image:: https://img.shields.io/travis/Hazboun6/PulsarDataToolbox.svg
+        :target: https://travis-ci.org/Hazboun6/PulsarDataToolbox
 
-.. image:: https://readthedocs.org/projects/pypsrfits/badge/?version=latest
-        :target: https://pypsrfits.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/PulsarDataToolbox/badge/?version=latest
+        :target: https://PulsarDataToolbox.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/Hazboun6/pypsrfits/shield.svg
-     :target: https://pyup.io/repos/github/Hazboun6/pypsrfits/
+.. image:: https://pyup.io/repos/github/Hazboun6/PulsarDataToolbox/shield.svg
+     :target: https://pyup.io/repos/github/Hazboun6/PulsarDataToolbox/
      :alt: Updates
 
 
@@ -22,7 +22,7 @@ Python package for dealing with PSRFITS files.
 
 
 * Free software: GNU General Public License v3
-* Documentation: https://pypsrfits.readthedocs.io.
+* Documentation: https://PulsarDataToolbox.readthedocs.io.
 
 
 Features

@@ -1,4 +1,4 @@
-* PyPSRFITS version:
+* PulsarDataToolbox version:
 * Python version:
 * Operating System:
 

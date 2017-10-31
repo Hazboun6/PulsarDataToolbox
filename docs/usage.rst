@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use PyPSRFITS in a project::
+To use PulsarDataToolbox in a project::
 
-    import pypsrfits
+    import PulsarDataToolbox

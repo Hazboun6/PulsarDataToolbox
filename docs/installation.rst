@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install PyPSRFITS, run this command in your terminal:
+To install PulsarDataToolbox, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install pypsrfits
+    $ pip install PulsarDataToolbox
 
-This is the preferred method to install PyPSRFITS, as it will always install the most recent stable release. 
+This is the preferred method to install PulsarDataToolbox, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,19 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for PyPSRFITS can be downloaded from the `Github repo`_.
+The sources for PulsarDataToolbox can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/hazboun6/pypsrfits
+    $ git clone git://github.com/hazboun6/PulsarDataToolbox
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/hazboun6/pypsrfits/tarball/master
+    $ curl  -OL https://github.com/hazboun6/PulsarDataToolbox/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/hazboun6/pypsrfits
-.. _tarball: https://github.com/hazboun6/pypsrfits/tarball/master
+.. _Github repo: https://github.com/hazboun6/PulsarDataToolbox
+.. _tarball: https://github.com/hazboun6/PulsarDataToolbox/tarball/master

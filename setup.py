@@ -27,24 +27,24 @@ test_requirements = [
 ]
 
 setup(
-    name='pypsrfits',
+    name='PulsarDataToolbox',
     version='0.1.0',
-    description="Python package for dealing with PSRFITS files.",
+    description="Python package for dealing with PSRFITS and other pulsar data files.",
     long_description=readme + '\n\n' + history,
     author="Jeffrey S Hazboun",
     author_email='jeffrey.hazboun@gmail.com',
-    url='https://github.com/hazboun6/pypsrfits',
-    packages=find_packages(include=['pypsrfits']),
+    url='https://github.com/hazboun6/PulsarDataToolbox',
+    packages=find_packages(include=['PulsarDataToolbox']),
     entry_points={
         'console_scripts': [
-            'pypsrfits=pypsrfits.cli:main'
+            'PulsarDataToolbox=PulsarDataToolbox.cli:main'
         ]
     },
     include_package_data=True,
     install_requires=requirements,
     license="GNU General Public License v3",
     zip_safe=False,
-    keywords='pypsrfits',
+    keywords='PulsarDataToolbox',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

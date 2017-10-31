@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `pypsrfits` package."""
+"""Tests for `PulsarDataToolbox` package."""
 
 
 import unittest
 from click.testing import CliRunner
 
-from pypsrfits import pypsrfits
-from pypsrfits import cli
+from PulsarDataToolbox import PulsarDataToolbox
+from PulsarDataToolbox import cli
 
 
-class TestPypsrfits(unittest.TestCase):
-    """Tests for `pypsrfits` package."""
+class TestPulsarDataToolbox(unittest.TestCase):
+    """Tests for `PulsarDataToolbox` package."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -28,7 +28,7 @@ class TestPypsrfits(unittest.TestCase):
         runner = CliRunner()
         result = runner.invoke(cli.main)
         assert result.exit_code == 0
-        assert 'pypsrfits.cli.main' in result.output
+        assert 'PulsarDataToolbox.cli.main' in result.output
         help_result = runner.invoke(cli.main, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output

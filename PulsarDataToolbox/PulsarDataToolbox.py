@@ -11,7 +11,7 @@ import warnings
 
 class psrfits(F.FITS):
 
-    def __init__(self, psrfits_path, mode = 'rw', from_template=False, obs_mode='SEARCH'):
+    def __init__(self, psrfits_path, mode = 'rw', from_template=False, obs_mode='SEARCH',verbose=True):
         """
         Class which inherits fitsio.FITS() (Python wrapper for cfitsio) class's functionality,
         and add's new functionality to easily manipulate and make PSRFITS files.
@@ -21,8 +21,8 @@ class psrfits(F.FITS):
                     for search mode, fold mode or calibration mode.
         mode = 'r', 'rw, 'READONLY' or 'READWRITE'
         """
+        self.verbose = verbose
         self.psrfits_path = psrfits_path
-
         dir_path = os.path.dirname(os.path.realpath(__file__))
         if os.path.exists(psrfits_path) and not from_template:
             print('Loading PSRFITS file from path:\n\'{0}\'.'.format(psrfits_path))
@@ -44,6 +44,7 @@ class psrfits(F.FITS):
             if mode == 'r':
                 raise ValueError('Can not write new PSRFITS file if it is intialized in write-only mode!')
 
+            self.written = False
             self.fits_template = F.FITS(template_path, mode='r')
             self.draft_hdrs = collections.OrderedDict()
             self.HDU_drafts = {}
@@ -68,7 +69,7 @@ class psrfits(F.FITS):
             self.HDU_drafts = {}
             self.draft_hdrs['PRIMARY'] = self[0].read_header() #Set the ImageHDU to be called primary.
             self.n_hdrs = len(self.hdu_list)
-
+            self.written = False
             for ii in range(self.n_hdrs-1):
                 hdr_key = self[ii+1].get_extname()
                 self.draft_hdrs[hdr_key] = self[ii+1].read_header()
@@ -83,6 +84,8 @@ class psrfits(F.FITS):
           PRIMARY header (an ImageHDU). PRIMARY is dealt with a bit differently.
         HDUs = dictionary of recarrays to make into HDUs. Default is set to HDU_drafts
         """
+        if self.written:
+            raise ValueError('PSRFITS file has already been written. Can not write twice.')
         if not HDUs:
             HDUs = self.HDU_drafts
         self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
@@ -90,7 +93,7 @@ class psrfits(F.FITS):
         for hdr in self.draft_hdr_keys[1:]:
             self.write_table(HDUs[hdr])
             self.set_hdr_from_draft(hdr)
-
+        self.written = True
     # def write_psrfits_from_draft?(self):
     #     self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
     #     self.set_hdr_from_draft('PRIMARY')
@@ -333,6 +336,34 @@ class psrfits(F.FITS):
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_OFFS',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_SCL',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',(nbin,nchan,npol,nsblk),data_dtype)
+
+    def close(self):
+        """
+        Override of fitsio close method. Adds more variables to set to none.
+        TODO: Make sure this no longer creates a stack overload!!
+        Close the fits file and set relevant metadata to None
+        """
+        if hasattr(self,'_FITS'):
+            if self._FITS:
+                #if self.verbose:
+                #    print('PSRFITS file is closing.')
+                print('') #This call to print prevents a stack overflow. I do not know why.
+                self._FITS.close()
+                self._FITS=None
+        self._filename=None
+        self.mode=None
+        self.charmode=None
+        self.intmode=None
+
+        #TODO Write script that sets all non overlapping variables to None.
+        self.HDU_drafts=None
+        self.draft_hdr_keys=None
+        self.draft_hdrs=None
+        self.n_hdrs=None
+        self.psrfits_path=None
+
+        self.hdu_list=None
+        self.hdu_map=None
 
     def real_data(self):
         """

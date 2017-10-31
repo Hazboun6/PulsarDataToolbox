@@ -85,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/pypsrfits.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/PulsarDataToolbox.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/pypsrfits.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/PulsarDataToolbox.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/pypsrfits"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/pypsrfits"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/PulsarDataToolbox"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/PulsarDataToolbox"
 	@echo "# devhelp"
 
 epub:
