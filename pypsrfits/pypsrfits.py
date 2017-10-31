@@ -11,18 +11,18 @@ import warnings
 
 class psrfits(F.FITS):
 
-    def __init__(self, psrfits_path, mode = 'rw', from_template=False, obs_mode='SEARCH'):
+    def __init__(self, psrfits_path, mode = 'rw', from_template=False, obs_mode='SEARCH',verbose=True):
         """
         Class which inherits fitsio.FITS() (Python wrapper for cfitsio) class's functionality,
-        and add's new functionality for easily manipulate and make PSRFITS files.
+        and add's new functionality to easily manipulate and make PSRFITS files.
         from_template= True, False or a string which is the path to a user chosen template.
         psrfits_path = Either the path to an existing PSRFITS file or the name for a new file.
         obs_mode = Same as OBS_MODE in a standard PSRFITS, either SEARCH, PSR or CAL
                     for search mode, fold mode or calibration mode.
         mode = 'r', 'rw, 'READONLY' or 'READWRITE'
         """
+        self.verbose = verbose
         self.psrfits_path = psrfits_path
-
         dir_path = os.path.dirname(os.path.realpath(__file__))
         if os.path.exists(psrfits_path) and not from_template:
             print('Loading PSRFITS file from path:\n\'{0}\'.'.format(psrfits_path))
@@ -44,6 +44,7 @@ class psrfits(F.FITS):
             if mode == 'r':
                 raise ValueError('Can not write new PSRFITS file if it is intialized in write-only mode!')
 
+            self.written = False
             self.fits_template = F.FITS(template_path, mode='r')
             self.draft_hdrs = collections.OrderedDict()
             self.HDU_drafts = {}
@@ -68,7 +69,7 @@ class psrfits(F.FITS):
             self.HDU_drafts = {}
             self.draft_hdrs['PRIMARY'] = self[0].read_header() #Set the ImageHDU to be called primary.
             self.n_hdrs = len(self.hdu_list)
-
+            self.written = False
             for ii in range(self.n_hdrs-1):
                 hdr_key = self[ii+1].get_extname()
                 self.draft_hdrs[hdr_key] = self[ii+1].read_header()
@@ -83,6 +84,8 @@ class psrfits(F.FITS):
           PRIMARY header (an ImageHDU). PRIMARY is dealt with a bit differently.
         HDUs = dictionary of recarrays to make into HDUs. Default is set to HDU_drafts
         """
+        if self.written:
+            raise ValueError('PSRFITS file has already been written. Can not write twice.')
         if not HDUs:
             HDUs = self.HDU_drafts
         self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
@@ -90,7 +93,7 @@ class psrfits(F.FITS):
         for hdr in self.draft_hdr_keys[1:]:
             self.write_table(HDUs[hdr])
             self.set_hdr_from_draft(hdr)
-
+        self.written = True
     # def write_psrfits_from_draft?(self):
     #     self.write_PrimaryHDU_info_dict(self.fits_template[0],self[0])
     #     self.set_hdr_from_draft('PRIMARY')
@@ -209,15 +212,34 @@ class psrfits(F.FITS):
         return new_record
 
     def replace_FITS_Record(self, hdr, name, new_value):
+        """
+        Replace a Fits record with a new value in a fitsio.fitslib.FITSHDR object.
+        hdr = Header name as string or FITSHDR object.
+        name = FITS Record/Card name to replace.
+        new_value = The new value of the parameter.
+        """
         if isinstance(hdr,str):
             hdr = self.draft_hdrs[hdr] #Maybe faster if try: except: used?
         new_record = self.make_FITS_card(hdr,name,new_value)
         hdr.add_record(new_record)
 
     def get_HDU_dtypes(self, HDU):
+        """
+        Returns a list of data types and array sizes needed to make a recarray.
+        HDU = A FITS HDU.
+        """
         return HDU.get_rec_dtype()[0].descr
 
     def set_HDU_array_shape_and_dtype(self, HDU_dtype_list, name, new_array_shape=None, new_dtype=None):
+        """
+        Takes a list of data types (output of get_HDU_dtypes()) and returns new
+        list with the named element's array shape and/or data type edited.
+        HDU_dtype_list = dtype list for making recarray (output of get_HDU_dtypes()).
+        name = Name of parameter to edit.
+        new_array_shape = tuple defining new array shape. Note 1-d arrays are of type (n,)
+          in FITS files.
+        new_dtype = New data type. See PSRFITS and fitsio documentation for recognized names.
+        """
         try:
             ii = [x for x, y in enumerate(HDU_dtype_list) if y[0] == name.upper()][0]
         except:
@@ -230,9 +252,18 @@ class psrfits(F.FITS):
             HDU_dtype_list[ii] = (HDU_dtype_list[ii][0],new_dtype,HDU_dtype_list[ii][2])
 
     def make_HDU_rec_array(self, nrows, HDU_dtype_list):
+        """
+        Makes a rec array with the set number of rows and data structure dictated
+        by the dtype list.
+        """
+        #TODO Add in hdf5 type file format for large arrays?
         return np.empty(nrows, dtype=HDU_dtype_list)
 
-    def write_PrimaryHDU_info_dict(self, ImHDU_template,new_ImHDU):
+    def write_PrimaryHDU_info_dict(self, ImHDU_template, new_ImHDU):
+        """
+        Writes the information dictionary for a primary header Image HDU (new_ImHDU)
+        using ImHDU_template as the template. Both are FITS HDUs.
+        """
         try:
             new_ImHDU.__dict__['_info'].__delitem__('error')
         except:
@@ -305,6 +336,34 @@ class psrfits(F.FITS):
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_OFFS',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_SCL',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',(nbin,nchan,npol,nsblk),data_dtype)
+
+    def close(self):
+        """
+        Override of fitsio close method. Adds more variables to set to none.
+        TODO: Make sure this no longer creates a stack overload!!
+        Close the fits file and set relevant metadata to None
+        """
+        if hasattr(self,'_FITS'):
+            if self._FITS:
+                #if self.verbose:
+                #    print('PSRFITS file is closing.')
+                print('') #This call to print prevents a stack overflow. I do not know why.
+                self._FITS.close()
+                self._FITS=None
+        self._filename=None
+        self.mode=None
+        self.charmode=None
+        self.intmode=None
+
+        #TODO Write script that sets all non overlapping variables to None.
+        self.HDU_drafts=None
+        self.draft_hdr_keys=None
+        self.draft_hdrs=None
+        self.n_hdrs=None
+        self.psrfits_path=None
+
+        self.hdu_list=None
+        self.hdu_map=None
 
     def real_data(self):
         """
