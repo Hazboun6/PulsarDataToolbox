@@ -1,4 +1,4 @@
-Welcome to PyPSRFITS's documentation!
+Welcome to PulsarDataToolbox's documentation!
 ======================================
 
 Contents:

@@ -2,29 +2,29 @@
 deploy:
   true:
     python: 2.7
-    repo: hazboun6/pypsrfits
+    repo: hazboun6/PulsarDataToolbox
     tags: true
-  user: hazboun6
   password:
     secure: !!binary |
-      SDh6cVpKRGFhUjB6ajQ2ZmpHY1NsRWdMcG1hc1J1Y0RnTFB0YUZwRm4wWEVDbG44NEtXeUlNdVA2
-      cWszdjFFRkFrbkNGclVEbWRLS1JISXdDc0REUWZGSmxiaSs4dm9iYnM0cGJPSktOdUNYYWRxMk5H
-      MmphSEh2MmlKaGhVa3ZYQXY4S3Z1eURaSDYxMDU0aTNESm1ZSkhDN2VhL1JKeENHRklaVUtuTExl
-      SEVLOVBoNHM2aHhZZGdaa0RlMTBhR3g3RDQxU0ordmluYUd4RGI5QVgyN1NuMnAxcE1SUjQ3VTEz
-      QWhXL2dMQ0xOMTQvUEV4MkJPYW8xcUFIWGNFdGNrTlpnVUhYU1hGWTJaelRzRnE0OC9CQnZXTFJr
-      ZkI0M05pKzF2Z1IzSHpNdU1JdW9QYVBnQ1pwVU1nUlVsNmNvV0daUm5TSE5hVjU1NFA4OUlMUHVS
-      U2RZRlhDTVQ0a2ZJSTVvTDVvYUg5UWdTQnlobVJ6Z29TNmtWUDJwR0pUVnBtaUpFK1V2UmhSeEp4
-      SzB5ajZhaTFDT052Q2pyd0N2UVNhNlB4MTFMRXJVMWk0YVpaY3JmYzJycFVIZGtBUkVwZ21jT1pz
-      SlJqRVBoOTRBc2htK3I0cUZVR25UTXc5UmtNSzJmK25zalZLczR0ZFhrdDdvN2Uwc1lhVkRXUEpH
-      MHBXejBhWGZwYUlycmRTUDRlcmYvVnlxZW1yQ2IxK2FMb2NaWVd3T2ZYOGYxS1FxMGxsUmNHZCtT
-      M1UzYUlYejMrb3pWak14S1ZCQ2lKMklzZkR4Z2pqb0JESE9SSzcvODd0d1VjcE9yUmJNbUF1dHZk
-      WGxiczJsYzJyR0JOK01yaVVOb2ZiTHlHRXVIMGx1SlZCVnJIeC80NjdvNHVpMU5Rc1FTRUt4aWc9
+      SEpqR0g3NTNqSzhmS2sxT3hMMFd4OEpzTUFCWTZzcTl6YVBUaWNXVENQcDIzdFRTU0xOSVJLRUd6
+      eVVJN2lBejJWSnJnNVBrQVlVT0U0Tlk4aC9MRHluWEVvM0RSMU9HSHZQSU5seE1RT2YxWXhiNVFU
+      eFJRaTZVM2Q0VGRkckhYdExVWVJIK3dPSGJtcVVLZ1AwbklnWGFOSDgrU0JzRkVjdUZDRmtPKzFQ
+      bmxaN1lta3Q5ZXlqZDl1YkNNT1dQY3NLVGVvOHY3UzNFU3N5QlpoMDJrWHlEUkZoMkpmY2pabi9q
+      TkFFa1YrT1c3Q2ltU3p5NTkwNEdWa2hxc0JwcFNocXYzVTBtYk5VVFdFMWt6UDM0emNqb0pHN1Qx
+      dGQyS0kyb1hvZGl0bEs0cDBtOVFyMGZCWFFCa0h5V0RmcGpidTNjSWF5M3lEVkc5Tk9NbTZQV0Zy
+      RGlTNHZxZVZJUW1TYlpwWnZKWi84WVhqa0NhR0IzOVduMGVRQ01URUY3aTkyRGNNUzB5UFhEei9t
+      ZXZDQ3hTL2sxV2pORmFLc3B5QlBUcW05UjdiY1Q4cjduUE9hTko1bzB2VGp5Nng4M0x5Znl0TWE4
+      dmY4a25VTGlydzhCbmE3SDQrR2VrdVNpaGF1WkZCTjEzbVh2enRRNm5WeVdHd29BRHhUYkFRTDln
+      RTJqTjMrTE8vRzVPeTJJR2l1ZC90NnR0NDRkYmtQMmliTzA4bEJXeWZWVVUwdGVmT1RDYzFsM1Zm
+      b3M1OExYMmI4dUFFYjBKOXJNU0xMU0JSTmUyamFnY3I4eEN5aVRmRDR5cTMvdmd1QXpNaC9jcnkx
+      QmtCTjZvSHRZbWIwdnBNQUFCaTZxZUJRSHVBMlkvcmJrSzBFNkFCU09SWjZvRmpnLzNQVVVyOXc9
+  user: hazboun6
   distributions: sdist bdist_wheel
   provider: pypi
 install:
-    - pip install -U tox-travis
-    - pip install -r requirements_dev.txt
-    - pip install -r requirements.txt
+- pip install -U tox-travis
+- pip install -r requirements_dev.txt
+- pip install -r requirements.txt
 language: python
 python:
 - 3.5

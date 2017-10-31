@@ -48,25 +48,25 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 
 lint: ## check style with flake8
-	flake8 pypsrfits tests
+	flake8 PulsarDataToolbox tests
 
 test: ## run tests quickly with the default Python
-	
+
 		python setup.py test
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source pypsrfits setup.py test
+	coverage run --source PulsarDataToolbox setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/pypsrfits.rst
+	rm -f docs/PulsarDataToolbox.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ pypsrfits
+	sphinx-apidoc -o docs/ PulsarDataToolbox
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
