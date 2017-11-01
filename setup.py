@@ -47,7 +47,7 @@ setup(
     keywords='PulsarDataToolbox',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Pulsar Astronomers',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         "Programming Language :: Python :: 2",
