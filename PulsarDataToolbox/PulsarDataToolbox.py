@@ -183,18 +183,19 @@ class psrfits(F.FITS):
         new_value = The new value you would like to replace.
         """
         record = self.get_FITS_card_dict(hdr,name)
+        record_value = record['value']
 
-        if isinstance(record['value'],tuple):
-            record['value'] = str(record['value']).replace(' ','')
-            #Workaround for TDIM17 in SUBINT HDU... Could make more specific if necessary.
-
-        if str(record['value']) in record['card_string']: #TODO Add error checking new value... and isinstance(new_value)
+        def fits_format(new_value,record_value):
+            """
+            Take in the new_value and record value, and format for searching card string.
+            Change the shape of the string to fill out PSRFITS File Correctly
+            """
             try: #when new_value is a string
-                if len(new_value)<len(record['value']):
+                if len(new_value)<len(record_value):
                     new_value = new_value.ljust(str_len)
-                card_string = record['card_string'].replace(record['value'],new_value)
+                card_string = record['card_string'].replace(record_value,new_value)
             except: # When new_value is a number
-                old_val_str = str(record['value'])
+                old_val_str = str(record_value)
                 old_str_len = len(old_val_str)
                 new_value = str(new_value)
                 new_str_len = len(new_value)
@@ -203,6 +204,19 @@ class psrfits(F.FITS):
                 elif new_str_len > old_str_len:
                     old_val_str = old_val_str.rjust(new_str_len) # If new value is longer pull out more spaces.
                 card_string = record['card_string'].replace(old_val_str,new_value)
+            return card_string
+
+        if isinstance(record['value'],tuple):
+            record['value'] = str(record['value']).replace(' ','')
+            #Workaround for TDIM17 in SUBINT HDU... Could make more specific if necessary.
+
+        if str(record['value']) in record['card_string']: #TODO Add error checking new value... and isinstance(new_value)
+            card_string = fits_format(new_value, record_value)
+        elif str(record['value'])[-1]=='0' and (str(record['value'])[:-1] in record['card_string']):
+            record_value = str(record['value'])[:-1]
+            if record_value[-1]=='.' and str(new_value)[-1]!='.':
+                new_value = str(new_value) + '.'
+            card_string = fits_format(new_value, record_value)
         else:
             raise ValueError('The old value, {0}, does not appear in this exact form in the FITS Header.'.format(str(record['value'])))
 
