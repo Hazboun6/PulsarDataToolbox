@@ -194,6 +194,7 @@ class psrfits(F.FITS):
                 if len(new_value)<len(record_value):
                     new_value = new_value.ljust(str_len)
                 card_string = record['card_string'].replace(record_value,new_value)
+                
             except: # When new_value is a number
                 old_val_str = str(record_value)
                 old_str_len = len(old_val_str)
@@ -202,6 +203,9 @@ class psrfits(F.FITS):
                 if new_str_len < old_str_len:
                     new_value = new_value.rjust(old_str_len) # If new value is shorter fill out with spaces.
                 elif new_str_len > old_str_len:
+                    if new_str_len>20:
+                        new_value=new_value[:20]
+                        new_str_len = 20
                     old_val_str = old_val_str.rjust(new_str_len) # If new value is longer pull out more spaces.
                 card_string = record['card_string'].replace(old_val_str,new_value)
             return card_string
@@ -219,11 +223,13 @@ class psrfits(F.FITS):
             card_string = fits_format(new_value, record_value)
         else:
             raise ValueError('The old value, {0}, does not appear in this exact form in the FITS Header.'.format(str(record['value'])))
-
+        print(record)
         new_record = F.FITSRecord(card_string)
         if new_record['value'] != new_record['value_orig']:
             new_record['value_orig']=new_record['value']
-        return new_record
+        print(record)
+        print(new_record)
+        #return new_record
 
     def replace_FITS_Record(self, hdr, name, new_value):
         """
@@ -232,8 +238,14 @@ class psrfits(F.FITS):
         name = FITS Record/Card name to replace.
         new_value = The new value of the parameter.
         """
-        if isinstance(hdr,str):
-            hdr = self.draft_hdrs[hdr] #Maybe faster if try: except: used?
+        # try:
+        #     new_record = self.make_FITS_card(hdr,name,new_value)
+        # except AttributeError:
+        #
+        #     new_record = self.make_FITS_card(hdr,name,new_value)
+        if not isinstance(hdr,F.fitslib.FITSHDR):
+            hdr = self.draft_hdrs[hdr]
+             #Maybe faster if try: except: used?
         new_record = self.make_FITS_card(hdr,name,new_value)
         hdr.add_record(new_record)
 
@@ -337,9 +349,10 @@ class psrfits(F.FITS):
         bytes_in_lone_floats = 7*8 + 5*4
         #This is the number of bytes in TSUBINT, OFFS_SUB, LST_SUB, etc.
         naxis1 = str(tform17 + 2*nchan*4 + 2*nchan*npol*4 + bytes_in_lone_floats)
-        self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1)+'B')
+        self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1))#+'B'
         tdim17 = '('+str(nbin)+','+str(nchan)+','+str(npol)+','+str(nsblk)+')'
         self.replace_FITS_Record('SUBINT','TDIM17', tdim17)
+        self.replace_FITS_Record('SUBINT','TDIM17', tdim17) #TODO: We need to call this twice!! Why?!
         #Could make tdim17 a tuple, instead of string? Though that might change how it looks...
 
         #Make a dtype list with defined dimensions and data type
