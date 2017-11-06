@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# encoding=utf8
 """Main module."""
 
 #Pulsar Data Toolbox. Based on fitsio package. See https://github.com/esheldon/fitsio for details.
@@ -191,10 +191,10 @@ class psrfits(F.FITS):
             Change the shape of the string to fill out PSRFITS File Correctly
             """
             try: #when new_value is a string
-                if len(new_value)<len(record_value):
+                if len(new_value)<=len(record_value):
                     new_value = new_value.ljust(str_len)
                 card_string = record['card_string'].replace(record_value,new_value)
-                
+
             except: # When new_value is a number
                 old_val_str = str(record_value)
                 old_str_len = len(old_val_str)
@@ -210,26 +210,35 @@ class psrfits(F.FITS):
                 card_string = record['card_string'].replace(old_val_str,new_value)
             return card_string
 
-        if isinstance(record['value'],tuple):
-            record['value'] = str(record['value']).replace(' ','')
-            #Workaround for TDIM17 in SUBINT HDU... Could make more specific if necessary.
+        #if isinstance(record['value'],tuple):
+        #    record['value'] = str(record['value']).replace(' ','')
+        #    #Workaround for TDIM17 in SUBINT HDU... Could make more specific if necessary.
+        special_fields = ['TDIM17']
 
-        if str(record['value']) in record['card_string']: #TODO Add error checking new value... and isinstance(new_value)
+        if record['name'] in special_fields:
+            new_record = record
+            record_value = str(record_value).replace(' ','')
+            card_string = fits_format(new_value.replace(' ',''), record_value)
+            new_record['card_string'] = card_string.replace('\' (','\'(')
+            new_record['value'] = new_value
+            new_record['value_orig']=new_record['value']
+
+        elif str(record['value']) in record['card_string']: #TODO Add error checking new value... and isinstance(new_value)
             card_string = fits_format(new_value, record_value)
+            new_record = F.FITSRecord(card_string)
         elif str(record['value'])[-1]=='0' and (str(record['value'])[:-1] in record['card_string']):
             record_value = str(record['value'])[:-1]
             if record_value[-1]=='.' and str(new_value)[-1]!='.':
                 new_value = str(new_value) + '.'
             card_string = fits_format(new_value, record_value)
+            new_record = F.FITSRecord(card_string)
         else:
             raise ValueError('The old value, {0}, does not appear in this exact form in the FITS Header.'.format(str(record['value'])))
-        print(record)
-        new_record = F.FITSRecord(card_string)
+
         if new_record['value'] != new_record['value_orig']:
             new_record['value_orig']=new_record['value']
-        print(record)
-        print(new_record)
-        #return new_record
+
+        return new_record
 
     def replace_FITS_Record(self, hdr, name, new_value):
         """
@@ -344,16 +353,14 @@ class psrfits(F.FITS):
         self.replace_FITS_Record('SUBINT','TFORM14',str(nchan)+'E')
         self.replace_FITS_Record('SUBINT','TFORM15',str(nchan*npol)+'E')
         self.replace_FITS_Record('SUBINT','TFORM16',str(nchan*npol)+'E')
-        tform17 = nbin*nchan*npol*nsblk*self.bitpix
+        tform17 = nbin*nchan*npol*nsblk
         self.replace_FITS_Record('SUBINT','TFORM17',str(tform17)+'B')
         bytes_in_lone_floats = 7*8 + 5*4
         #This is the number of bytes in TSUBINT, OFFS_SUB, LST_SUB, etc.
         naxis1 = str(tform17 + 2*nchan*4 + 2*nchan*npol*4 + bytes_in_lone_floats)
-        self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1))#+'B'
-        tdim17 = '('+str(nbin)+','+str(nchan)+','+str(npol)+','+str(nsblk)+')'
+        self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1))
+        tdim17 = '('+str(nbin)+', '+str(nchan)+', '+str(npol)+', '+str(nsblk)+')'
         self.replace_FITS_Record('SUBINT','TDIM17', tdim17)
-        self.replace_FITS_Record('SUBINT','TDIM17', tdim17) #TODO: We need to call this twice!! Why?!
-        #Could make tdim17 a tuple, instead of string? Though that might change how it looks...
 
         #Make a dtype list with defined dimensions and data type
         self.nrows = self.nsubint = nsubint
@@ -362,7 +369,7 @@ class psrfits(F.FITS):
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_WTS',(nchan,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_OFFS',(nchan*npol,))
         self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DAT_SCL',(nchan*npol,))
-        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',(nbin,nchan,npol,nsblk),data_dtype)
+        self.set_HDU_array_shape_and_dtype(self.subint_dtype,'DATA',(nbin,nchan,npol,nsblk))#,data_dtype)
 
     def close(self):
         """
