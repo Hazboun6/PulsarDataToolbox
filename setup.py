@@ -35,11 +35,11 @@ setup(
     author_email='jeffrey.hazboun@gmail.com',
     url='https://github.com/hazboun6/PulsarDataToolbox',
     packages=find_packages(include=['pdat']),
-    # entry_points={
-    #     'console_scripts': [
-    #         'pdat=pdat.cli:main'
-    #     ]
-    # },
+    entry_points={
+        'console_scripts': [
+            'pdat=pdat.cli:main'
+        ]
+    },
     include_package_data=True,
     install_requires=requirements,
     license="MIT License",
