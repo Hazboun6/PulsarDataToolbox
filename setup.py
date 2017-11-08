@@ -28,7 +28,7 @@ test_requirements = [
 
 setup(
     name='pdat',
-    version='0.1.1',
+    version='0.1.3',
     description="Python package for dealing with PSRFITS and other pulsar data files.",
     long_description=readme + '\n\n' + history,
     author="Jeffrey S Hazboun",
