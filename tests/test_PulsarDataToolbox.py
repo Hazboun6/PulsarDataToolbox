@@ -7,8 +7,8 @@
 import unittest
 from click.testing import CliRunner
 
-from PulsarDataToolbox import PulsarDataToolbox
-from PulsarDataToolbox import cli
+from pdat import pdat
+from pdat import cli
 
 
 class TestPulsarDataToolbox(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestPulsarDataToolbox(unittest.TestCase):
         runner = CliRunner()
         result = runner.invoke(cli.main)
         assert result.exit_code == 0
-        assert 'PulsarDataToolbox.cli.main' in result.output
+        assert 'pdat.cli.main' in result.output
         help_result = runner.invoke(cli.main, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output
