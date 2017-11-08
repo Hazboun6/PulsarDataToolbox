@@ -28,23 +28,23 @@ test_requirements = [
 
 setup(
     name='pdat',
-    version='0.1.0',
+    version='0.1.1',
     description="Python package for dealing with PSRFITS and other pulsar data files.",
     long_description=readme + '\n\n' + history,
     author="Jeffrey S Hazboun",
     author_email='jeffrey.hazboun@gmail.com',
     url='https://github.com/hazboun6/PulsarDataToolbox',
     packages=find_packages(include=['pdat']),
-    entry_points={
-        'console_scripts': [
-            'pdat=pdat.cli:main'
-        ]
-    },
+    # entry_points={
+    #     'console_scripts': [
+    #         'pdat=pdat.cli:main'
+    #     ]
+    # },
     include_package_data=True,
     install_requires=requirements,
     license="MIT License",
     zip_safe=False,
-    keywords='PulsarDataToolbox',
+    keywords='pdat',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
