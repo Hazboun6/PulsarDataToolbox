@@ -3,7 +3,7 @@ PulsarDataToolbox
 =========
 
 
-.. image:: https://img.shields.io/pypi/v/PulsarDataToolbox.svg
+.. image:: https://img.shields.io/pypi/v/pdat.svg
         :target: https://pypi.python.org/pypi/pdat
 
 .. image:: https://img.shields.io/travis/Hazboun6/PulsarDataToolbox.svg
