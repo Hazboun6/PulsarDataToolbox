@@ -14,6 +14,8 @@ Contents:
    readme
    installation
    usage
+   pdat_intro
+   psrfits_write
    modules
    contributing
    authors
