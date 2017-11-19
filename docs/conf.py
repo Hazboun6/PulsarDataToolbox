@@ -35,7 +35,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'nbsphinx',
 ]
-
+#['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.mathjax']
 napoleon_google_docstring = False
 napoleon_use_param = False
 napoleon_use_ivar = True
@@ -345,3 +345,23 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+# allows readthedocs to auto-generate docs
+import subprocess
+def run_apidoc(_):
+    output_path = os.path.abspath(os.path.dirname(__file__))
+    # make docs from notebooks
+    nb = '_static/notebooks/*.ipynb'
+    subprocess.check_call(['jupyter nbconvert --template nb-rst.tpl --to rst',
+                           nb, '--output-dir', output_path])
+
+    modules = ['../pdat']
+    for module in modules:
+        cmd_path = 'sphinx-apidoc'
+        if hasattr(sys, 'real_prefix'):  # Check to see if we are in a virtualenv
+            # If we are, assemble the path manually
+            cmd_path = os.path.abspath(os.path.join(sys.prefix, 'bin', 'sphinx-apidoc'))
+        subprocess.check_call([cmd_path, '-o', output_path, '-f', '-M', module])
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
