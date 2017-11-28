@@ -30,15 +30,17 @@ sys.path.insert(0, os.path.abspath('../'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'nbsphinx',
-]
-#['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.mathjax']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.mathjax']
+#['sphinx.ext.autodoc','sphinx.ext.napoleon','nbsphinx',]
 napoleon_google_docstring = False
 napoleon_use_param = False
 napoleon_use_ivar = True
+
+# get doctrings for __init__ method
+autoclass_content = 'both'
+
+# make order or docs 'groupwise'
+autodoc_member_order = 'groupwise'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -310,7 +312,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pulsardatatoolbox', 'Pulsar Data Toolbox Documentation',
+    (master_doc, 'pdat', 'Pulsar Data Toolbox Documentation',
      [author], 1)
 ]
 
@@ -325,8 +327,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'PulsarDataToolbox', 'Pulsar Data Toolbox Documentation',
-     author, 'PulsarDataToolbox', 'One line description of project.',
+    (master_doc, 'pdat',
+    'Pulsar Data Toolbox Documentation',
+     author,
+     'PulsarDataToolbox', 'Package for dealing with pulsar data formats in Python.',
      'Miscellaneous'),
 ]
 
@@ -351,9 +355,9 @@ import subprocess
 def run_apidoc(_):
     output_path = os.path.abspath(os.path.dirname(__file__))
     # make docs from notebooks
-    nb = '_static/notebooks/*.ipynb'
-    subprocess.check_call(['jupyter nbconvert --template nb-rst.tpl --to rst',
-                           nb, '--output-dir', output_path])
+    # nb = '_static/notebooks/*.ipynb'
+    # subprocess.check_call(['jupyter nbconvert --template nb-rst.tpl --to rst',
+    #                        nb, '--output-dir', output_path])
 
     modules = ['../pdat']
     for module in modules:
