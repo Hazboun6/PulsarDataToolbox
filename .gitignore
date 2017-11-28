@@ -49,6 +49,9 @@ coverage.xml
 *.mo
 *.pot
 
+#Jupyter Noetbook checkpoints
+docs/_static/notebooks/.ipynb_checkpoints/
+
 # Django stuff:
 *.log
 
