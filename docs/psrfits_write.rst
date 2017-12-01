@@ -6,10 +6,12 @@
 
 .. _psrfits_write:
 
+Writing PSRFITS
+===============
+
 .. code:: python
 
     import numpy as np
-    
     import pdat
 
 Instantiate a draft file from a template

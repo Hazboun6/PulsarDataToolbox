@@ -14,13 +14,15 @@ Pulsar Data Toolbox:
 
 The ``psrfits`` class allows easy access to the specialized FITS files
 used in the Pulsar/Radio Astronomy community know as PSRFITS files. The
-standard can be found at [AuzzieWebsite]. In the current version of
-``pdat`` this class is based on the Python package ``fitsio`` which is a
-wrapper for the ``c``-library ``cfitsio``. In the future we plan to also
-make a version that uses the ``astropy.io.fits`` package, however the
-``c`` library is fast, efficient, allows appending and accessing of
-BinTables without loading the whole file to memory. Since PSRFITS files
-carry large BinTables these types of efficiencies are very useful.
+standard can be found on the `CSIRO Pulsar Group
+website <http://www.atnf.csiro.au/people/pulsar/index.html?n=Main.Psrfits>`__.
+In the current version of ``pdat`` this class is based on the Python
+package ``fitsio`` which is a wrapper for the c-library ``cfitsio``. In
+the future we plan to also make a version that uses the
+``astropy.io.fits`` package, however the ``c`` library is fast,
+efficient, allows appending and accessing of BinTables without loading
+the whole file to memory. Since PSRFITS files carry large BinTables
+these types of efficiencies are very useful.
 
 Loading and Appending
 ---------------------
@@ -521,13 +523,23 @@ represnting an image, of the primary HDU, acting as the main header file
 for the FITS file.
 
 **SUBINT HDU**: The BinTable extension (HDU) that holds the data from a
-pulsar/radio observation. In a ``FOLD`` mode PSRFITS file these are
-actually subintegrations of folded pulsar data.
+pulsar/radio observation. In a ``PSR`` (folded) mode PSRFITS file these
+are actually subintegrations of folded pulsar data.
 
-**HISTORY HDU**:
+**HISTORY HDU**: The BinTable extension (HDU) that has some information
+about the history of the observation and what may have been done to the
+data in the file.
 
-**FITS Card**:
+**FITS Card**: The header information in FITS files is held in a FITS
+card. In Python these are usually held as dictionary-type variables.
+There is a ``card string`` which hold the information that appears when
+you call the header. One of the dictionary entries is the actual value
+called when accesing the data.
 
-**POLYCO HDU**:
+**POLYCO HDU**: The BinTable extension (HDU) that has a list of the
+Chebyshev polynomial coefficients used for a short timescale timing
+model when using the backend of a telescope in ‘PSR’ (folding) mode.
 
-**PARAM HDU**:
+**PARAM HDU**: The BinTable extensino (HDU) that hols the parameters of
+the pulsar. Most often these are text lines taken from a ``.par``
+(parameter) file.
