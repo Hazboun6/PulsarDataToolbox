@@ -9,14 +9,6 @@ pdat package
 Submodules
 ----------
 
-pdat.cli module
----------------
-
-.. automodule:: pdat.cli
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pdat.pdat module
 ----------------
 
@@ -24,5 +16,3 @@ pdat.pdat module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
