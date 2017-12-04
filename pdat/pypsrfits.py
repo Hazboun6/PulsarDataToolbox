@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 # Simple code to read search-mode PSRFITS data arrays into python
-from future import (absolute_import, division,
+from __future__ import (absolute_import, division,
                     print_function, unicode_literals)
 import fitsio
 import numpy
