@@ -3,6 +3,8 @@
 """Main module."""
 
 #Pulsar Data Toolbox. Based on fitsio package. See https://github.com/esheldon/fitsio for details.
+from __future__ import (absolute_import, division,
+                    print_function, unicode_literals)
 import numpy as np
 import fitsio as F
 import collections, os
