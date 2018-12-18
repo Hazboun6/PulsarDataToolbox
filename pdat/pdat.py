@@ -11,6 +11,9 @@ import collections, os, sys
 import datetime
 import warnings
 
+package_path = os.path.dirname(__file__)
+template_dir = os.path.join(package_path, './templates/')
+
 class psrfits(F.FITS):
 
     def __init__(self, psrfits_path, mode='rw', from_template=False,
