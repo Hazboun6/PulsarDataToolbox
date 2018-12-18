@@ -1,6 +1,6 @@
-=========
+=================
 PulsarDataToolbox
-=========
+=================
 
 
 .. image:: https://img.shields.io/pypi/v/pdat.svg
@@ -9,7 +9,7 @@ PulsarDataToolbox
 .. image:: https://img.shields.io/travis/Hazboun6/PulsarDataToolbox.svg
         :target: https://travis-ci.org/Hazboun6/PulsarDataToolbox
 
-.. image:: https://readthedocs.org/projects/PulsarDataToolbox/badge/?version=latest
+.. image:: https://readthedocs.org/projects/pulsardatatoolbox/badge/?version=latest
         :target: https://PulsarDataToolbox.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
@@ -28,7 +28,9 @@ Python package for dealing with PSRFITS files.
 Features
 --------
 
-* TODO
+The Pulsar Data Toolbox has tools built for building pulsar data formats. Only
+the `PSRFITS` standard is currently supported, but if you are interested in
+another format submit an issue or a pull request!
 
 Credits
 ---------
