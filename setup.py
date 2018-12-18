@@ -12,7 +12,6 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'Click>=6.0',
     'numpy>=1.11',
     'fitsio>=0.9.10'
     # TODO: put package requirements here
@@ -28,19 +27,15 @@ test_requirements = [
 
 setup(
     name='pdat',
-    version='0.1.4',
+    version='0.2.0',
     description="Python package for dealing with PSRFITS and other pulsar data files.",
     long_description=readme + '\n\n' + history,
     author="Jeffrey S Hazboun",
     author_email='jeffrey.hazboun@gmail.com',
     url='https://github.com/hazboun6/PulsarDataToolbox',
     packages=find_packages(include=['pdat']),
-    entry_points={
-        'console_scripts': [
-            'pdat=pdat.cli:main'
-        ]
-    },
     include_package_data=True,
+    package_data={'pdat': ['templates/*.fits']},
     install_requires=requirements,
     license="MIT License",
     zip_safe=False,
@@ -55,6 +50,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     test_suite='tests',
     tests_require=test_requirements,
