@@ -9,7 +9,7 @@ import numpy
 class PyPSRFITS:
     """
     A version of Paul Demorest's pypsrfits routines added into the Pulsar Data Toolbox
-    framework for ease of installation and doecumenting. I have replaced PSRFITS
+    framework for ease of installation and documenting. I have replaced PSRFITS
     with PyPSRFITS to avoid confusion between this and the psrfits class, which
     is more generic.
 
