@@ -10,6 +10,7 @@ import fitsio as F
 import collections, os, sys
 import datetime
 import warnings
+import six
 
 package_path = os.path.dirname(__file__)
 template_dir = os.path.join(package_path, './templates/')
@@ -61,7 +62,7 @@ class psrfits(F.FITS):
                     print('Removing older PSRFITS file from path:\n'
                           '   \'{0}\'.'.format(psrfits_path))
 
-            if isinstance(from_template, (str, basestring)):
+            if isinstance(from_template, six.string_types):
                 template_path = from_template
             # elif isinstance(from_template, bool):
             #     template_path = filename #Path to template...
@@ -243,7 +244,7 @@ class psrfits(F.FITS):
         keys = self.draft_hdr_keys
         if isinstance(hdr,int):
             hdr_name = keys[hdr]
-        if isinstance(hdr,(str, basestring)):
+        if isinstance(hdr, six.string_types):
             hdr_name = hdr.upper()
             hdr = list_arg(keys,hdr_name)
         # with warnings.catch_warnings(): #This is very Dangerous
