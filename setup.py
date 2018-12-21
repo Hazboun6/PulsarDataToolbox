@@ -23,7 +23,7 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    'pytest>=3.4.2',# TODO: put package test requirements here
 ]
 
 setup(
