@@ -5,20 +5,34 @@
 
 
 import unittest
-
+import pytest
 
 from pdat import pdat
 
 
+@pytest.fixture
+def response():
+    """Sample pytest fixture.
 
-class TestPulsarDataToolbox(unittest.TestCase):
-    """Tests for `PulsarDataToolbox` package."""
+    See more at: http://doc.pytest.org/en/latest/fixture.html
+    """
+    # import requests
+    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
 
-    def setUp(self):
-        """Set up test fixtures, if any."""
 
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
+def test_content(response):
+    """Sample pytest test function with the pytest fixture as an argument."""
+    # from bs4 import BeautifulSoup
+    # assert 'GitHub' in BeautifulSoup(response.content).title.string
 
-    def test_000_something(self):
-        """Test something."""
+# class TestPulsarDataToolbox(unittest.TestCase):
+#     """Tests for `PulsarDataToolbox` package."""
+#
+#     def setUp(self):
+#         """Set up test fixtures, if any."""
+#
+#     def tearDown(self):
+#         """Tear down test fixtures, if any."""
+#
+#     def test_000_something(self):
+#         """Test something."""
