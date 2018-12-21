@@ -9,3 +9,5 @@ Sphinx==1.8.2
 cryptography==2.4.2
 PyYAML==3.13
 astropy>=2.0
+pytest>=3.4.2
+pytest-runner>=2.11.1
