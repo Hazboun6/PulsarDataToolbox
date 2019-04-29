@@ -344,8 +344,8 @@ class psrfits(F.FITS):
             Replaces the entire center of the card string using the new value.
             """
             cardstring = record['card_string']
-            equal_idx = old_cardstring.find('=')
-            slash_idx = old_cardstring.find('/')
+            equal_idx = cardstring.find('=')
+            slash_idx = cardstring.find('/')
             len_center = slash_idx - equal_idx - 1
             new_center = str(new_value).rjust(len_center)
             cardstring[equal_idx+1, slash_idx] = new_center
