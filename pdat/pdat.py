@@ -356,7 +356,11 @@ class psrfits(F.FITS):
         # for TDIM17, TDIM20 in SUBINT HDU...
         # Could make more specific if necessary.
         special_fields = ['TDIM17','TDIM20']
-
+        print('Here is the record_value:',record_value)
+        print('Here is the string:',str(record_value).upper())
+        print('Here is the string(float()):',str(np.float64(record_value)).upper())
+        print('Here is the card string:',record['card_string'])
+        print('Here is the record:',record)
         if record['name'] in special_fields:
             new_record = record
             record_value = str(record_value).replace(' ','')
@@ -392,8 +396,7 @@ class psrfits(F.FITS):
 
             record_value = np.float64(record_value)
             new_value = str(new_value).upper()
-            print('Here is the string:',str(record_value).upper())
-            print('Here is the card string:',record['card_string'])
+
             if str(record_value).upper() in record['card_string']:
                 record_value = str(record_value).upper()
                 card_string = _fits_format(new_value, record_value)
