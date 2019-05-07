@@ -306,8 +306,8 @@ class psrfits(F.FITS):
 
         string_dtypes = ['C']
         number_dtypes = ['I','F']
-        if dtype == 'F':
-            record_value = np.float64(record_value)
+        # if dtype == 'F':
+        #     record_value = np.float64(record_value)
 
         def _fits_format(new_value,record_value):
             """
@@ -350,9 +350,11 @@ class psrfits(F.FITS):
             slash_idx = cardstring.find('/')
             len_center = slash_idx - equal_idx - 1
             new_center = str(new_value).rjust(len_center)
-            new_cardstring = cardstring[:equal_idx+1] + new_center
-            new_cardstring += cardstring[:slash_idx]
-            return new_cardstring
+            old_center = cardstring[equal_idx+1:slash_idx]
+            cardstring.replace(old_center,new_center)
+            # new_cardstring = cardstring[:equal_idx+1] + new_center
+            # new_cardstring += cardstring[:slash_idx]
+            return cardstring
 
         #if isinstance(record['value'],tuple):
         #    record['value'] = str(record['value']).replace(' ','')
@@ -393,9 +395,6 @@ class psrfits(F.FITS):
               and (('E' in str(record_value)) or ('e' in str(record_value))
                     or ('E' in str(record['value_orig']))
                     or ('e' in str(record['value_orig'])))):
-
-            record_value = np.float64(record_value)
-            new_value = str(new_value).upper()
 
             if str(record_value).upper() in record['card_string']:
                 record_value = str(record_value).upper()
