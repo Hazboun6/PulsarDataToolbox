@@ -306,8 +306,8 @@ class psrfits(F.FITS):
 
         string_dtypes = ['C']
         number_dtypes = ['I','F']
-        # if dtype == 'F':
-        #     record_value = np.float64(record_value)
+        if dtype == 'F':
+            record_value = np.float64(record_value)
 
         def _fits_format(new_value,record_value):
             """
