@@ -306,6 +306,8 @@ class psrfits(F.FITS):
 
         string_dtypes = ['C']
         number_dtypes = ['I','F']
+        if dtype == 'F':
+            record_value = np.float64(record_value)
 
         def _fits_format(new_value,record_value):
             """
@@ -356,11 +358,7 @@ class psrfits(F.FITS):
         # for TDIM17, TDIM20 in SUBINT HDU...
         # Could make more specific if necessary.
         special_fields = ['TDIM17','TDIM20']
-        print('Here is the record_value:',record_value)
-        print('Here is the string:',str(record_value).upper())
-        print('Here is the string(float()):',str(np.float64(record_value)).upper())
-        print('Here is the card string:',record['card_string'])
-        print('Here is the record:',record)
+
         if record['name'] in special_fields:
             new_record = record
             record_value = str(record_value).replace(' ','')
@@ -370,6 +368,7 @@ class psrfits(F.FITS):
             new_record['value_orig'] = new_record['value']
 
         #TODO Add error checking new value... and isinstance(new_value)
+
         #Usual Case
         elif str(record['value']) in record['card_string']:
             card_string = _fits_format(new_value, record_value)
