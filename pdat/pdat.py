@@ -351,10 +351,10 @@ class psrfits(F.FITS):
             len_center = slash_idx - equal_idx - 1
             new_center = str(new_value).rjust(len_center)
             old_center = cardstring[equal_idx+1:slash_idx]
-            cardstring.replace(old_center,new_center)
+            new_cardstring = cardstring.replace(old_center,new_center)
             # new_cardstring = cardstring[:equal_idx+1] + new_center
             # new_cardstring += cardstring[:slash_idx]
-            return cardstring
+            return new_cardstring
 
         #if isinstance(record['value'],tuple):
         #    record['value'] = str(record['value']).replace(' ','')
