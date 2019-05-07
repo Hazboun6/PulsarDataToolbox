@@ -392,6 +392,8 @@ class psrfits(F.FITS):
 
             record_value = np.float64(record_value)
             new_value = str(new_value).upper()
+            print('Here is the string:',str(record_value).upper())
+            print('Here is the card string:',record['card_string'])
             if str(record_value).upper() in record['card_string']:
                 record_value = str(record_value).upper()
                 card_string = _fits_format(new_value, record_value)
