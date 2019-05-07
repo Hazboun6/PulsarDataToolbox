@@ -390,6 +390,7 @@ class psrfits(F.FITS):
                     or ('E' in str(record['value_orig']))
                     or ('e' in str(record['value_orig'])))):
 
+            record_value = np.float64(record_value)
             new_value = str(new_value).upper()
             if str(record_value).upper() in record['card_string']:
                 record_value = str(record_value).upper()
