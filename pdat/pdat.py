@@ -93,8 +93,10 @@ class psrfits(F.FITS):
                 hdr_key = self.fits_template[ii].get_extname()
                 self.draft_hdrs[hdr_key] = self.fits_template[ii].read_header()
                 self.HDU_drafts[hdr_key] = None
+                if hdr_key in ['SUBINT']:
+                    self._data_n = _get_var_n(self.draft_hdrs[hdr_key],'DATA')
             self.draft_hdr_keys = list(self.draft_hdrs.keys())
-
+            #Get all of the TTYPE names here and put in a list for later use
             if verbose:
                 msg = 'Making new {0} mode PSRFITS file '.format(self.obs_mode)
                 msg += 'using template from path:\n'
@@ -132,6 +134,7 @@ class psrfits(F.FITS):
                 hdr_key = self[ii+1].get_extname()
                 self.draft_hdrs[hdr_key] = self[ii+1].read_header()
                 self.HDU_drafts[hdr_key] = None
+
             self.draft_hdr_keys = list(self.draft_hdrs.keys())
 
 
@@ -355,9 +358,9 @@ class psrfits(F.FITS):
         #    record['value'] = str(record['value']).replace(' ','')
         # for TDIM17, TDIM20 in SUBINT HDU...
         # Could make more specific if necessary.
-        special_fields = ['TDIM17','TDIM20']
 
-        if record['name'] in special_fields:
+        special_field = ['TDIM{0}'.format(self._data_n)]
+        if record['name'] in special_field:
             new_record = record
             record_value = str(record_value).replace(' ','')
             card_string = _fits_format(new_value.replace(' ',''), record_value)
@@ -604,10 +607,11 @@ class psrfits(F.FITS):
             naxis1 += bytes_in_lone_floats
             self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1))
 
-            # Set the TDIM17 string-tuple
-            tdim17 = '('+str(nbin)+', '+str(nchan)+', '
-            tdim17 += str(npol)+', '+str(nsblk)+')'
-            self.replace_FITS_Record('SUBINT','TDIM17', tdim17)
+            # Set the TDIM_Data string-tuple (Usually TDIM17)
+            tdim_data = '('+str(nbin)+', '+str(nchan)+', '
+            tdim_data += str(npol)+', '+str(nsblk)+')'
+            tdim_data_str = 'TDIM{0}'.format(self._data_n)
+            self.replace_FITS_Record('SUBINT',tdim_data_str, tdim_data)
 
             self.subint_dtype = self.get_HDU_dtypes(self.fits_template
                                                     [self.subint_idx])
@@ -655,9 +659,10 @@ class psrfits(F.FITS):
             naxis1 += 2*nchan*npol*4 + bytes_in_lone_floats
             self.replace_FITS_Record('SUBINT','NAXIS1', str(naxis1))
 
-            # Set the TDIM20 string-tuple
-            tdim20 = '('+str(nbin)+', '+str(nchan)+', ' + str(npol)+')'
-            self.replace_FITS_Record('SUBINT','TDIM20', tdim20)
+            # Set the TDIM_data string-tuple, Usually TDIM20 or TDIM21
+            tdim_data = '('+str(nbin)+', '+str(nchan)+', ' + str(npol)+')'
+            tdim_data_str = 'TDIM{0}'.format(self._data_n)
+            self.replace_FITS_Record('SUBINT',tdim_data_str, tdim_data)
 
             self.subint_dtype = self.get_HDU_dtypes(self.fits_template
                                                     [self.subint_idx])
@@ -792,3 +797,11 @@ def convert2asciii(dictionary):
                  if type(value) in [str,bytes] else
                  (key.encode('ascii','ignore'),value)
                  for key, value in dictionary.items()])
+
+def _get_var_n(hdr,var):
+    """
+    Returns integer, n, for a given variable name, assuming 'TTYPEn' form in
+    header, where TTYPEn = var.
+    """
+    return int([ky for ky in hdr.keys()
+                if str(hdr[ky]).rstrip() == var][0].replace('TTYPE',''))

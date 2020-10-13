@@ -3,8 +3,6 @@
 
 """Tests for `PulsarDataToolbox` package."""
 
-
-import unittest
 import pytest
 
 from pdat import pdat
