@@ -13,9 +13,9 @@ PulsarDataToolbox
         :target: https://PulsarDataToolbox.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/Hazboun6/PulsarDataToolbox/shield.svg
-     :target: https://pyup.io/repos/github/Hazboun6/PulsarDataToolbox/
-     :alt: Updates
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4088660.svg
+        :target: https://doi.org/10.5281/zenodo.4088660
+
 
 
 Python package for dealing with PSRFITS files.
