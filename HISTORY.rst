@@ -1,6 +1,10 @@
 =======
 History
 =======
+0.2.2 (2020-10-13)
+------------------
+* Fixed issue with version of fitsio, and removed PyUp.
+
 0.2.1 (2018-12-17)
 ------------------
 * Fixed Python 2 string bug.

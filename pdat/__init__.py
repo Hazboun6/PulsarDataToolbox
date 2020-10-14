@@ -8,4 +8,4 @@ from .pypsrfits import PyPSRFITS
 
 __author__ = """Jeffrey S Hazboun"""
 __email__ = 'jeffrey.hazboun@gmail.com'
-__version__ = '0.2.1'
+__version__ = '0.2.2'

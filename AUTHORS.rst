@@ -9,4 +9,4 @@ Development Lead
 
 Contributors
 ------------
-Paul Demorest (GitHub: demorest)
+Brent Shapiro-Albert
