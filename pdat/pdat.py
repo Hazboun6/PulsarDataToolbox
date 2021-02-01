@@ -11,6 +11,7 @@ import collections, os, sys
 import datetime
 import warnings
 import six
+import copy
 
 package_path = os.path.dirname(__file__)
 template_dir = os.path.join(package_path, './templates/')
@@ -301,121 +302,124 @@ class psrfits(F.FITS):
             The new value you would like to replace.
         """
         record = self.get_FITS_card_dict(hdr,name)
-        record_value = record['value']
-        dtype = record['dtype']
+        # record_value = record['value']
+        record.update({'value':new_value})
+        
+        new_record = F.FITSRecord(record)
+        # dtype = record.get_rec_dtype()#['dtype']
 
-        string_dtypes = ['C']
-        number_dtypes = ['I','F']
-
-        def _fits_format(new_value,record_value):
-            """
-            Take in the new_value and record value, and format for searching
-            card string. Change the shape of the string to fill out PSRFITS
-            File Correctly.
-            """
-            try: #when new_value is a string
-                if len(new_value)<=len(record_value):
-                    str_len = len(record_value)
-                    new_value = new_value.ljust(str_len)
-                card_string = record['card_string'].replace(record_value,
-                                                            new_value)
-
-            except TypeError: # When new_value is a number
-                old_val_str = str(record_value)
-                old_str_len = len(old_val_str)
-                new_value = str(new_value)
-                new_str_len = len(new_value)
-                if new_str_len < old_str_len:
-                    # If new value is shorter fill out with spaces.
-                    new_value = new_value.rjust(old_str_len)
-                elif new_str_len > old_str_len:
-                    if new_str_len>20:
-                        new_value=new_value[:20]
-                        new_str_len = 20
-
-                    # If new value is longer pull out more spaces.
-                    old_val_str = old_val_str.rjust(new_str_len)
-                card_string = record['card_string'].replace(old_val_str,
-                                                            new_value)
-            return card_string
-
-        def _replace_center_of_cardstring(new_value):
-            """
-            Replaces the entire center of the card string using the new value.
-            """
-            cardstring = record['card_string']
-            equal_idx = old_cardstring.find('=')
-            slash_idx = old_cardstring.find('/')
-            len_center = slash_idx - equal_idx - 1
-            new_center = str(new_value).rjust(len_center)
-            cardstring[equal_idx+1, slash_idx] = new_center
-            return cardstring
-
-        #if isinstance(record['value'],tuple):
-        #    record['value'] = str(record['value']).replace(' ','')
-        # for TDIM17, TDIM20 in SUBINT HDU...
-        # Could make more specific if necessary.
-        special_fields = ['TDIM17','TDIM20']
-
-        if record['name'] in special_fields:
-            new_record = record
-            record_value = str(record_value).replace(' ','')
-            card_string = _fits_format(new_value.replace(' ',''), record_value)
-            new_record['card_string'] = card_string.replace('\' (','\'(')
-            new_record['value'] = new_value
-            new_record['value_orig'] = new_record['value']
-
-        #TODO Add error checking new value... and isinstance(new_value)
-        #Usual Case
-        elif str(record['value']) in record['card_string']:
-            card_string = _fits_format(new_value, record_value)
-            new_record = F.FITSRecord(card_string)
-
-        #Special Case 1, Find Numbers with trailing zeros and writes string.
-        elif ((str(record['value'])[-1]=='0')
-              and (str(record['value'])[:-1] in record['card_string'])):
-
-            record_value = str(record['value'])[:-1]
-            #Adds decimal pt to end of string.
-            if record_value[-1]=='.' and str(new_value)[-1]!='.':
-                new_value = str(new_value) + '.'
-            card_string = _fits_format(new_value, record_value)
-            new_record = F.FITSRecord(card_string)
-
-        #Special Case 2, Find Numbers with upper/lower E in sci notation
-        #that do not match exactly. Always use E in card string.
-        elif (('dtype' in record.keys())
-              and (record['dtype'] in number_dtypes)
-              and (('E' in str(record_value)) or ('e' in str(record_value))
-                    or ('E' in str(record['value_orig']))
-                    or ('e' in str(record['value_orig'])))):
-
-            new_value = str(new_value).upper()
-            if str(record_value).upper() in record['card_string']:
-                record_value = str(record_value).upper()
-                card_string = _fits_format(new_value, record_value)
-                new_record = F.FITSRecord(card_string)
-            elif str(record_value).lower() in record['card_string']:
-                record_value =str(record_value).lower()
-                card_string = _fits_format(new_value, record_value)
-                new_record = F.FITSRecord(card_string)
-            else:
-                card_string = _replace_center_of_cardstring(new_value)
-                new_record = F.FITSRecord(card_string)
-                msg = 'Old value cannot be found in card string. '
-                msg += 'Entire center replaced.'
-                print(msg)
-
-        #Replace whole center if can't find value.
-        else:
-            card_string = _replace_center_of_cardstring(new_value)
-            new_record = F.FITSRecord(card_string)
-            msg = 'Old value cannot be found in card string. '
-            msg += 'Entire center replaced.'
-            print(msg)
-
-        if new_record['value'] != new_record['value_orig']:
-            new_record['value_orig'] = new_record['value']
+        # string_dtypes = ['C']
+        # number_dtypes = ['I','F']
+        #
+        # def _fits_format(new_value,record_value):
+        #     """
+        #     Take in the new_value and record value, and format for searching
+        #     card string. Change the shape of the string to fill out PSRFITS
+        #     File Correctly.
+        #     """
+        #     try: #when new_value is a string
+        #         if len(new_value)<=len(record_value):
+        #             str_len = len(record_value)
+        #             new_value = new_value.ljust(str_len)
+        #         card_string = record['card_string'].replace(record_value,
+        #                                                     new_value)
+        #
+        #     except TypeError: # When new_value is a number
+        #         old_val_str = str(record_value)
+        #         old_str_len = len(old_val_str)
+        #         new_value = str(new_value)
+        #         new_str_len = len(new_value)
+        #         if new_str_len < old_str_len:
+        #             # If new value is shorter fill out with spaces.
+        #             new_value = new_value.rjust(old_str_len)
+        #         elif new_str_len > old_str_len:
+        #             if new_str_len>20:
+        #                 new_value=new_value[:20]
+        #                 new_str_len = 20
+        #
+        #             # If new value is longer pull out more spaces.
+        #             old_val_str = old_val_str.rjust(new_str_len)
+        #         card_string = record['card_string'].replace(old_val_str,
+        #                                                     new_value)
+        #     return card_string
+        #
+        # def _replace_center_of_cardstring(new_value):
+        #     """
+        #     Replaces the entire center of the card string using the new value.
+        #     """
+        #     cardstring = record['card_string']
+        #     equal_idx = old_cardstring.find('=')
+        #     slash_idx = old_cardstring.find('/')
+        #     len_center = slash_idx - equal_idx - 1
+        #     new_center = str(new_value).rjust(len_center)
+        #     cardstring[equal_idx+1, slash_idx] = new_center
+        #     return cardstring
+        #
+        # #if isinstance(record['value'],tuple):
+        # #    record['value'] = str(record['value']).replace(' ','')
+        # # for TDIM17, TDIM20 in SUBINT HDU...
+        # # Could make more specific if necessary.
+        # special_fields = ['TDIM17','TDIM20']
+        #
+        # if record['name'] in special_fields:
+        #     new_record = record
+        #     record_value = str(record_value).replace(' ','')
+        #     card_string = _fits_format(new_value.replace(' ',''), record_value)
+        #     new_record['card_string'] = card_string.replace('\' (','\'(')
+        #     new_record['value'] = new_value
+        #     new_record['value_orig'] = new_record['value']
+        #
+        # #TODO Add error checking new value... and isinstance(new_value)
+        # #Usual Case
+        # elif str(record['value']) in record['card_string']:
+        #     card_string = _fits_format(new_value, record_value)
+        #     new_record = F.FITSRecord(card_string)
+        #
+        # #Special Case 1, Find Numbers with trailing zeros and writes string.
+        # elif ((str(record['value'])[-1]=='0')
+        #       and (str(record['value'])[:-1] in record['card_string'])):
+        #
+        #     record_value = str(record['value'])[:-1]
+        #     #Adds decimal pt to end of string.
+        #     if record_value[-1]=='.' and str(new_value)[-1]!='.':
+        #         new_value = str(new_value) + '.'
+        #     card_string = _fits_format(new_value, record_value)
+        #     new_record = F.FITSRecord(card_string)
+        #
+        # #Special Case 2, Find Numbers with upper/lower E in sci notation
+        # #that do not match exactly. Always use E in card string.
+        # elif (('dtype' in record.keys())
+        #       and (record['dtype'] in number_dtypes)
+        #       and (('E' in str(record_value)) or ('e' in str(record_value))
+        #             or ('E' in str(record['value_orig']))
+        #             or ('e' in str(record['value_orig'])))):
+        #
+        #     new_value = str(new_value).upper()
+        #     if str(record_value).upper() in record['card_string']:
+        #         record_value = str(record_value).upper()
+        #         card_string = _fits_format(new_value, record_value)
+        #         new_record = F.FITSRecord(card_string)
+        #     elif str(record_value).lower() in record['card_string']:
+        #         record_value =str(record_value).lower()
+        #         card_string = _fits_format(new_value, record_value)
+        #         new_record = F.FITSRecord(card_string)
+        #     else:
+        #         card_string = _replace_center_of_cardstring(new_value)
+        #         new_record = F.FITSRecord(card_string)
+        #         msg = 'Old value cannot be found in card string. '
+        #         msg += 'Entire center replaced.'
+        #         print(msg)
+        #
+        # #Replace whole center if can't find value.
+        # else:
+        #     card_string = _replace_center_of_cardstring(new_value)
+        #     new_record = F.FITSRecord(card_string)
+        #     msg = 'Old value cannot be found in card string. '
+        #     msg += 'Entire center replaced.'
+        #     print(msg)
+        #
+        # if new_record['value'] != new_record['value_orig']:
+        #     new_record['value_orig'] = new_record['value']
 
         return new_record
 
