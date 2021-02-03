@@ -234,7 +234,7 @@ class psrfits(F.FITS):
             self[list_arg(self.draft_hdr_keys,hdr)].append(rec_array)
 
 #######Convenience Functions################
-    def get_colnames():
+    def get_colnames(self):
         """Returns the names of all of the columns of data needed for a PSRFITS
         file."""
         return self[1].get_colnames()
@@ -304,7 +304,7 @@ class psrfits(F.FITS):
         record = self.get_FITS_card_dict(hdr,name)
         # record_value = record['value']
         record.update({'value':new_value})
-        
+
         new_record = F.FITSRecord(record)
         # dtype = record.get_rec_dtype()#['dtype']
 
