@@ -1,5 +1,5 @@
 Sphinx>=1.6.5
 numpy>=1.11
-fitsio==0.9.12
+fitsio>=1.0
 h5py>=2.6
 six>=1.12.0
